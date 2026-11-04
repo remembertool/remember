@@ -14,6 +14,7 @@ docker_smoke_test.py
 run_mac.command
 run_unix.sh
 run_windows.bat
+docs/
 
 # The benchmarks run from data/benchmarks/<dataset>/paper/*.txt.gz. The XES splits
 # (about 143 MB) are only a fallback; they are on Zenodo (doi:10.5281/zenodo.7578655).
