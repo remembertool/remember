@@ -1,0 +1,4 @@
+reference_log,checked_log,reference_traces,checked_traces,uEMSC,ER_U_bits_per_trace,predictive_perplexity_supported,supported_traces
+reference.xes,check_1.xes,50,30,0.986666,1.404394,1.214935,30
+reference.xes,check_2.xes,50,30,0.773334,1.691551,1.264275,30
+reference.xes,check_3.xes,50,30,0.566666,9.053966,1.240718,17

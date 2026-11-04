@@ -1,0 +1,714 @@
+{
+  "version": 2,
+  "source": "Mannhardt et al., supplementary material to \"Modelling data-aware stochastic processes - discovery and conformance checking\"",
+  "source_doi": "10.5281/zenodo.7578655",
+  "splits_per_dataset": 10,
+  "notes": "The 10 paired splits used for the 11 datasets of the paper (Incerto, Vandin, Sarv Ahrabi, Information Systems 133, 2025). Each split is an approximately 50/50 random split of the traces. A benchmark run learns a new VLMC from each reference part and scores the matching check part. The folder 'paper' of each dataset holds the same splits converted by the paper's own pipeline (github.com/bistrulli/remember, vlmcProcessMining.py), with the order of events with equal timestamps used in the paper; the tool uses these files so that the results are the published ones.",
+  "datasets": [
+    {
+      "id": "bpic12-a",
+      "name": "BPIC12-A",
+      "source_log": "BPI Challenge 2012",
+      "description": "Loan applications at a Dutch financial institute: the states of each application (A_ events).",
+      "stats": {
+        "traces": 13087,
+        "events": 60849,
+        "activities": 10,
+        "variants": 17
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic13-incidents",
+      "name": "BPIC13 Incidents",
+      "source_log": "BPI Challenge 2013",
+      "description": "Incident management at Volvo IT Belgium: the status changes of each IT incident.",
+      "stats": {
+        "traces": 7554,
+        "events": 65533,
+        "activities": 13,
+        "variants": 2278
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic13-open-problems",
+      "name": "BPIC13 Open Problems",
+      "source_log": "BPI Challenge 2013",
+      "description": "Problem management at Volvo IT Belgium: problems that were still open.",
+      "stats": {
+        "traces": 819,
+        "events": 2351,
+        "activities": 5,
+        "variants": 182
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic13-closed-problems",
+      "name": "BPIC13 Closed Problems",
+      "source_log": "BPI Challenge 2013",
+      "description": "Problem management at Volvo IT Belgium: problems that were closed.",
+      "stats": {
+        "traces": 1487,
+        "events": 6660,
+        "activities": 7,
+        "variants": 327
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic17-offer",
+      "name": "BPIC17 Offer Log",
+      "source_log": "BPI Challenge 2017",
+      "description": "Loan applications at a Dutch financial institute: the offers made to each customer (O_ events).",
+      "stats": {
+        "traces": 42995,
+        "events": 193849,
+        "activities": 8,
+        "variants": 16
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic20-domestic",
+      "name": "BPIC20 Domestic Declarations",
+      "source_log": "BPI Challenge 2020",
+      "description": "Travel expense claims at Eindhoven University of Technology: domestic trips.",
+      "stats": {
+        "traces": 10500,
+        "events": 56437,
+        "activities": 17,
+        "variants": 100
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic20-international",
+      "name": "BPIC20 International Declarations",
+      "source_log": "BPI Challenge 2020",
+      "description": "Travel expense claims at Eindhoven University of Technology: international trips, with travel permits.",
+      "stats": {
+        "traces": 6449,
+        "events": 72151,
+        "activities": 34,
+        "variants": 790
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic20-prepaid",
+      "name": "BPIC20 Prepaid Travel Cost",
+      "source_log": "BPI Challenge 2020",
+      "description": "Travel expense claims at Eindhoven University of Technology: travel costs paid in advance.",
+      "stats": {
+        "traces": 2099,
+        "events": 18246,
+        "activities": 29,
+        "variants": 204
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "bpic20-payment",
+      "name": "BPIC20 Request for Payment",
+      "source_log": "BPI Challenge 2020",
+      "description": "Travel expense claims at Eindhoven University of Technology: requests for payment not linked to a trip.",
+      "stats": {
+        "traces": 6886,
+        "events": 36796,
+        "activities": 19,
+        "variants": 91
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "sepsis",
+      "name": "Sepsis",
+      "source_log": "Sepsis Cases",
+      "description": "Pathways of patients with sepsis in a Dutch hospital, from emergency-room registration to discharge.",
+      "stats": {
+        "traces": 1050,
+        "events": 15214,
+        "activities": 16,
+        "variants": 847
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    },
+    {
+      "id": "road-traffic-fines",
+      "name": "Road Traffic Fines",
+      "source_log": "Road Traffic Fine Management",
+      "description": "Road traffic fines of an Italian local police force, from the fine to its payment or appeal.",
+      "stats": {
+        "traces": 150370,
+        "events": 561470,
+        "activities": 11,
+        "variants": 327
+      },
+      "splits": [
+        {
+          "index": 0,
+          "reference": "split_00_reference.xes.gz",
+          "check": "split_00_check.xes.gz"
+        },
+        {
+          "index": 1,
+          "reference": "split_01_reference.xes.gz",
+          "check": "split_01_check.xes.gz"
+        },
+        {
+          "index": 2,
+          "reference": "split_02_reference.xes.gz",
+          "check": "split_02_check.xes.gz"
+        },
+        {
+          "index": 3,
+          "reference": "split_03_reference.xes.gz",
+          "check": "split_03_check.xes.gz"
+        },
+        {
+          "index": 4,
+          "reference": "split_04_reference.xes.gz",
+          "check": "split_04_check.xes.gz"
+        },
+        {
+          "index": 5,
+          "reference": "split_05_reference.xes.gz",
+          "check": "split_05_check.xes.gz"
+        },
+        {
+          "index": 6,
+          "reference": "split_06_reference.xes.gz",
+          "check": "split_06_check.xes.gz"
+        },
+        {
+          "index": 7,
+          "reference": "split_07_reference.xes.gz",
+          "check": "split_07_check.xes.gz"
+        },
+        {
+          "index": 8,
+          "reference": "split_08_reference.xes.gz",
+          "check": "split_08_check.xes.gz"
+        },
+        {
+          "index": 9,
+          "reference": "split_09_reference.xes.gz",
+          "check": "split_09_check.xes.gz"
+        }
+      ]
+    }
+  ],
+  "stats_note": "stats describe the full log (reference + check part of split 1): traces, events, distinct activities and variants (distinct traces), counted after the activity names are cleaned."
+}

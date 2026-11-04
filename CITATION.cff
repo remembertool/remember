@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use REMEMBER or its results, please cite the paper below."
+title: "REMEMBER: stochastic conformance checking with Variable-Length Markov Chains"
+type: software
+version: "3.7"
+date-released: "2026-10-28"
+license: GPL-3.0-or-later
+repository-artifact: "https://hub.docker.com/r/remembericpm/remember"
+keywords:
+  - process mining
+  - stochastic conformance checking
+  - variable-length Markov chains
+  - uEMSC
+authors:
+  - given-names: Emilio
+    family-names: Incerto
+    affiliation: "IMT Lucca"
+    email: emilio.incerto@imtlucca.it
+  - given-names: Andrea
+    family-names: Vandin
+    affiliation: "Sant'Anna School for Advanced Studies, Pisa; DTU Technical University of Denmark"
+  - given-names: Sima
+    family-names: Sarv Ahrabi
+    affiliation: "Sant'Anna School for Advanced Studies, Pisa"
+preferred-citation:
+  type: article
+  title: "Stochastic conformance checking based on variable-length Markov chains"
+  authors:
+    - given-names: Emilio
+      family-names: Incerto
+      affiliation: "IMT Lucca"
+    - given-names: Andrea
+      family-names: Vandin
+      affiliation: "Sant'Anna School for Advanced Studies, Pisa; DTU Technical University of Denmark"
+    - given-names: Sima
+      family-names: Sarv Ahrabi
+      affiliation: "Sant'Anna School for Advanced Studies, Pisa"
+  journal: "Information Systems"
+  volume: 133
+  start: "102561"
+  year: 2025
+  doi: "10.1016/j.is.2025.102561"

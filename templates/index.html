@@ -1,0 +1,2167 @@
+<!doctype html>
+<!-- SPDX-FileCopyrightText: 2026 Emilio Incerto, Andrea Vandin, Sima Sarv Ahrabi -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- Additional terms (GNU GPL v3, section 7): see the file NOTICE. -->
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>REMEMBER — Stochastic Conformance Checking</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem('remember-theme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = saved || preferred;
+      } catch (_) {}
+    })();
+  </script>
+  <style>
+    /* Theme colours (light) */
+    :root {
+      --bg: #eef3f7;
+      --surface: #ffffff;
+      --surface-2: #f6f9fb;
+      --surface-3: #e9f1f5;
+      --surface-strong: #d9e9ee;
+      --text: #1c3344;
+      --text-strong: #061e2e;
+      --muted: #4a6172;
+      --muted-2: #5f7789;
+      --line: #d2dfe7;
+      --line-strong: #b0c5d1;
+
+      --navy: #0a2c43;
+      --teal: #0793a8;
+      --teal-text: #086b7d;
+      --teal-strong: #05586a;
+      --green: #4fae2f;
+      --cyan-soft: #e6f5f8;
+      --blue-soft: #ebf3f9;
+
+      --badge-bg: #0a2c43;
+      --badge-text: #ffffff;
+
+      --success: #22672f;
+      --success-soft: #e9f6ea;
+      --success-line: rgba(58,148,64,.45);
+      --warning: #7d5300;
+      --warning-soft: #fff5db;
+      --warning-line: rgba(156,107,0,.4);
+      --danger: #a12a38;
+      --danger-soft: #fdecef;
+      --danger-line: rgba(178,59,72,.45);
+
+      --shadow-xs: 0 1px 2px rgba(6,31,48,.06);
+      --shadow-sm: 0 2px 4px rgba(6,31,48,.04), 0 10px 28px -10px rgba(7,41,61,.16);
+      --shadow-md: 0 4px 8px rgba(6,31,48,.05), 0 22px 48px -16px rgba(7,41,61,.24);
+      --focus: 0 0 0 3px rgba(7,147,168,.32);
+
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+
+      --header-bg: rgba(255,255,255,.94);
+      --btn-primary-a: #08788b;
+      --btn-primary-b: #0a94a9;
+      --btn-primary-text: #ffffff;
+
+      --sidebar-bg: linear-gradient(180deg, #08283c 0%, #0a3550 100%);
+      --sidebar-panel: rgba(255,255,255,.075);
+      --sidebar-line: rgba(255,255,255,.16);
+      --sidebar-text: #ffffff;
+      --sidebar-muted: #cfe0e8;
+      --sidebar-accent: #6fdbe4;
+
+      /* Paper-comparison chart */
+      --cmp-live: #0793a8;
+      --cmp-paper: #5a52c7;
+      --cmp-other: #a3b0ba;
+      --cmp-live-soft: rgba(7,147,168,.09);
+      --cmp-paper-soft: rgba(90,82,199,.075);
+      --cmp-grid: #e3ebf0;
+      --cmp-ref: #6f8494;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #06121b;
+      --surface: #0d1d29;
+      --surface-2: #112532;
+      --surface-3: #16303f;
+      --surface-strong: #1c3f50;
+      --text: #d9e7ee;
+      --text-strong: #ffffff;
+      --muted: #a9bdc9;
+      --muted-2: #8fa6b4;
+      --line: #24404f;
+      --line-strong: #375a6d;
+
+      --navy: #dff7fb;
+      --teal: #3fc3d0;
+      --teal-text: #6ad6e1;
+      --teal-strong: #8fe4ec;
+      --green: #7fd15f;
+      --cyan-soft: #10303a;
+      --blue-soft: #10283a;
+
+      --badge-bg: #3fc3d0;
+      --badge-text: #04202a;
+
+      --success: #98e2a6;
+      --success-soft: #12301d;
+      --success-line: rgba(127,209,95,.45);
+      --warning: #f0cc7c;
+      --warning-soft: #332a12;
+      --warning-line: rgba(240,204,124,.4);
+      --danger: #ffa3ac;
+      --danger-soft: #38181e;
+      --danger-line: rgba(255,163,172,.45);
+
+      --shadow-xs: 0 1px 2px rgba(0,0,0,.35);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,.25), 0 12px 30px -10px rgba(0,0,0,.45);
+      --shadow-md: 0 4px 8px rgba(0,0,0,.3), 0 24px 52px -16px rgba(0,0,0,.55);
+      --focus: 0 0 0 3px rgba(106,214,225,.35);
+
+      --header-bg: rgba(6,18,27,.94);
+      --btn-primary-a: #35b5c3;
+      --btn-primary-b: #56d2de;
+      --btn-primary-text: #032029;
+
+      --sidebar-bg: linear-gradient(180deg, #0b2a3e 0%, #0d3550 100%);
+      --sidebar-panel: rgba(255,255,255,.06);
+      --sidebar-line: rgba(255,255,255,.14);
+
+      --cmp-live: #1fa0af;
+      --cmp-paper: #8c80e6;
+      --cmp-other: #5a6c7a;
+      --cmp-live-soft: rgba(31,160,175,.14);
+      --cmp-paper-soft: rgba(140,128,230,.12);
+      --cmp-grid: #1d3646;
+      --cmp-ref: #8fa6b4;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 116px; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--bg);
+      font-family: Inter, "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.55;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    button, input, select { font: inherit; }
+    button, summary, label { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible,
+    .drop-zone:focus-visible, a:focus-visible {
+      outline: none;
+      box-shadow: var(--focus);
+    }
+    .muted { color: var(--muted); }
+
+    /* ---------- Header ---------- */
+    .app-header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--header-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 8px 24px -16px rgba(7,41,61,.35);
+    }
+    .header-shell {
+      width: min(1560px, calc(100% - 40px));
+      margin: 0 auto;
+      min-height: 92px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 24px; min-width: 0; color: inherit; text-decoration: none; }
+    .brand-logo { display: block; flex: none; border-radius: 14px; }
+    .brand-logo img { display: block; height: 64px; width: auto; }
+    html[data-theme="dark"] .brand-logo { background: #ffffff; padding: 7px 14px; }
+    html[data-theme="dark"] .brand-logo img { height: 52px; }
+    .brand-meta { padding-left: 24px; border-left: 2px solid var(--line); min-width: 0; }
+    .brand-meta strong { display: block; color: var(--text-strong); font-size: 1.1rem; font-weight: 750; letter-spacing: -.005em; }
+    .brand-meta span { display: block; color: var(--muted); font-size: .95rem; margin-top: 2px; }
+
+    .theme-toggle {
+      display: inline-flex; gap: 4px; padding: 4px;
+      border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface-2);
+    }
+    .theme-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      height: 38px; padding: 0 16px;
+      border: 0; border-radius: 999px; background: transparent;
+      color: var(--muted); font-size: .92rem; font-weight: 650; cursor: pointer;
+      transition: background .15s ease, color .15s ease;
+    }
+    .theme-btn svg { width: 18px; height: 18px; flex: none; }
+    .theme-btn:hover { color: var(--text-strong); }
+    .theme-btn.active { background: var(--badge-bg); color: var(--badge-text); }
+
+    /* ---------- Layout ---------- */
+    .app-shell {
+      width: min(1560px, calc(100% - 40px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 276px minmax(0, 1fr);
+      gap: 28px;
+      padding: 28px 0 24px;
+      align-items: start;
+    }
+    .content { min-width: 0; }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar {
+      position: sticky; top: 112px; max-height: calc(100vh - 128px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin;
+      display: grid; gap: 12px; padding: 12px;
+      border-radius: 22px; border: 1px solid var(--sidebar-line);
+      background: var(--sidebar-bg); box-shadow: var(--shadow-md);
+    }
+    .side-card { border: 1px solid var(--sidebar-line); border-radius: 16px; background: var(--sidebar-panel); overflow: hidden; }
+    .workflow-card { padding: 16px 16px 4px; }
+    .side-kicker { font-size: .8rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--sidebar-accent); }
+    .workflow-step { display: grid; grid-template-columns: 32px minmax(0,1fr); gap: 12px; align-items: start; padding: 12px 0; }
+    .workflow-step + .workflow-step { border-top: 1px solid var(--sidebar-line); }
+    .workflow-number {
+      width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%;
+      background: var(--sidebar-accent); color: #04263a; font-size: .9rem; font-weight: 800;
+    }
+    .workflow-step strong { display: block; color: var(--sidebar-text); font-size: 1rem; line-height: 1.3; }
+    .workflow-step span:not(.workflow-number) { display: block; margin-top: 3px; color: var(--sidebar-muted); font-size: .875rem; line-height: 1.45; }
+
+    .side-nav { padding: 8px; display: grid; gap: 4px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px;
+      color: var(--sidebar-text); text-decoration: none; font-size: 1rem; font-weight: 650;
+      transition: background .15s ease;
+    }
+    .nav-link:hover { background: rgba(255,255,255,.11); }
+    .nav-link .nav-icon {
+      width: 32px; height: 32px; display: grid; place-items: center; flex: none;
+      border-radius: 9px; background: rgba(255,255,255,.1); color: var(--sidebar-accent);
+    }
+    .nav-link svg { width: 17px; height: 17px; }
+    .nav-link .ext { margin-left: auto; color: var(--sidebar-muted); font-size: .9rem; }
+
+    .legal-notice p { margin: 0 0 5px; font-size: .76rem; line-height: 1.45; }
+    .legal-notice p:last-child { margin-bottom: 0; }
+    .legal-notice .legal-title { font-weight: 700; }
+    .legal-notice .who { white-space: nowrap; }
+    .legal-notice sup { font-size: .68em; margin-right: 1px; }
+    .legal-notice a { text-decoration: none; font-weight: 650; }
+    .legal-notice a:hover { text-decoration: underline; }
+    .legal-card { padding: 12px 14px; background: transparent; color: var(--sidebar-muted); }
+    .legal-card .legal-title { color: var(--sidebar-text); }
+    .legal-card a { color: var(--sidebar-accent); }
+    .legal-bottom { display: none; margin-top: 8px; padding: 18px 4px 4px; border-top: 1px solid var(--line); color: var(--muted); }
+    .legal-bottom .legal-title { color: var(--text-strong); }
+    .legal-bottom a { color: var(--teal-text); }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative; overflow: hidden;
+      border: 1px solid var(--line); border-radius: var(--radius-xl);
+      background: var(--surface); box-shadow: var(--shadow-sm);
+      padding: 34px 36px 30px; margin-bottom: 24px;
+    }
+    .hero::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px;
+      background: linear-gradient(90deg, #0a2c43 0%, var(--teal) 55%, var(--green) 100%);
+    }
+    .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; }
+    .hero-kicker { display: inline-flex; align-items: center; gap: 10px; color: var(--teal-text); font-size: .875rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .hero-kicker::before { content: ""; width: 28px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, var(--teal), var(--green)); }
+    .hero h1 { margin: 12px 0 12px; color: var(--text-strong); font-size: clamp(2rem, 2.9vw, 2.75rem); line-height: 1.12; letter-spacing: -.028em; font-weight: 800; max-width: 22ch; }
+    .hero p { margin: 0; color: var(--muted); max-width: 70ch; font-size: 1.0625rem; line-height: 1.6; }
+    .hero-actions { flex: none; display: flex; align-items: center; gap: 10px; }
+    .hero-action {
+      appearance: none; display: inline-flex; align-items: center; gap: 9px; height: 42px; padding: 0 16px;
+      border: 1.5px solid var(--line-strong); border-radius: 12px; background: var(--surface);
+      color: var(--text-strong); font: inherit; font-size: .94rem; font-weight: 700; text-decoration: none; white-space: nowrap; cursor: pointer;
+      transition: border-color .15s ease, background .15s ease, color .15s ease;
+    }
+    .hero-action svg { width: 18px; height: 18px; flex: none; }
+    .hero-action:hover { border-color: var(--teal); color: var(--teal-text); }
+    .hero-action.is-primary { background: var(--badge-bg); border-color: var(--badge-bg); color: var(--badge-text); }
+    .hero-action.is-primary:hover { background: var(--teal-strong); border-color: var(--teal-strong); color: #fff; }
+    html[data-theme="dark"] .hero-action.is-primary:hover { background: var(--teal-strong); color: #04202a; }
+    .hero-action.is-soon { cursor: default; color: var(--muted); border-style: dashed; }
+    .hero-action.is-soon:hover { border-color: var(--line-strong); color: var(--muted); }
+    .soon-tag { padding: 1px 8px; border-radius: 999px; background: var(--surface-3); color: var(--muted); font-size: .76rem; font-weight: 750; }
+
+    .process-flow { display: grid; grid-template-columns: 1fr 1fr 1fr 1.32fr; gap: 30px; margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--line); }
+    .flow-step {
+      position: relative; display: flex; align-items: center; gap: 14px; min-width: 0;
+      padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2);
+    }
+    .flow-step:not(:last-child)::after {
+      content: ""; position: absolute; right: -22px; top: 50%; width: 14px; height: 14px; margin-top: -7px;
+      border-top: 3px solid var(--teal); border-right: 3px solid var(--teal); transform: rotate(45deg); border-radius: 2px;
+    }
+    .flow-num {
+      flex: none; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%;
+      background: var(--badge-bg); color: var(--badge-text); font-weight: 800; font-size: 1rem;
+    }
+    .flow-step small { display: block; color: var(--teal-text); font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; line-height: 1.2; }
+    .flow-step strong { display: block; color: var(--text-strong); margin-top: 3px; font-size: 1.02rem; line-height: 1.25; }
+    .flow-step.is-learning { border-color: var(--teal); background: var(--cyan-soft); }
+    .flow-step.is-checking { border-color: var(--line-strong); background: var(--blue-soft); }
+    .method-note {
+      margin-top: 16px; padding: 11px 14px; border-left: 4px solid var(--teal); border-radius: 10px;
+      background: var(--cyan-soft); color: var(--muted); font-size: .94rem; line-height: 1.5;
+    }
+    .method-note strong { color: var(--text-strong); }
+
+    /* ---------- Cards ---------- */
+    .dashboard-card {
+      border: 1px solid var(--line); border-radius: var(--radius-xl);
+      background: var(--surface); box-shadow: var(--shadow-sm);
+      overflow: hidden; margin-bottom: 24px;
+    }
+    .card-head { padding: 26px 32px 22px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; color: var(--teal-text); font-size: .85rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .card-head h2 { margin: 6px 0 6px; color: var(--text-strong); font-size: 1.65rem; line-height: 1.2; letter-spacing: -.018em; font-weight: 800; }
+    .card-head p { margin: 0; color: var(--muted); font-size: 1rem; max-width: 80ch; }
+    .card-body { padding: 28px 32px 32px; }
+
+    /* ---------- Mode switch ---------- */
+    .mode-switch { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+    .mode-button {
+      appearance: none; position: relative; display: flex; align-items: flex-start; gap: 14px;
+      min-height: 96px; padding: 18px 44px 18px 18px;
+      border: 2px solid var(--line); border-radius: 16px; background: var(--surface);
+      text-align: left; color: var(--text); cursor: pointer;
+      transition: border-color .15s ease, background .15s ease, box-shadow .15s ease, transform .15s ease;
+    }
+    .mode-button:hover { border-color: var(--line-strong); transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .mode-icon {
+      flex: none; width: 44px; height: 44px; display: grid; place-items: center;
+      border-radius: 12px; background: var(--surface-3); color: var(--muted);
+      transition: background .15s ease, color .15s ease;
+    }
+    .mode-icon svg { width: 23px; height: 23px; }
+    .mode-text strong { display: block; color: var(--text-strong); font-size: 1.06rem; line-height: 1.3; }
+    .mode-text span { display: block; margin-top: 4px; color: var(--muted); font-size: .9rem; line-height: 1.4; }
+    .mode-button::after {
+      content: ""; position: absolute; top: 16px; right: 16px; width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid var(--line-strong); background: transparent;
+    }
+    .mode-button.active { border-color: var(--teal); background: var(--cyan-soft); box-shadow: 0 0 0 4px rgba(7,147,168,.13); }
+    .mode-button.active .mode-icon { background: var(--badge-bg); color: var(--badge-text); }
+    .mode-button.active::after {
+      border-color: var(--teal); background: var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 14px no-repeat;
+    }
+    .mode-panel[hidden] { display: none !important; }
+
+    /* ---------- Upload ---------- */
+    .setup-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .drop-zone {
+      position: relative; min-height: 236px; display: grid; place-items: center;
+      padding: 26px 22px; text-align: center;
+      border: 2px dashed var(--line-strong); border-radius: 18px; background: var(--surface-2);
+      cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+    .drop-zone:hover, .drop-zone.dragging { border-color: var(--teal); background: var(--cyan-soft); }
+    .drop-zone.dragging { transform: scale(1.01); }
+    .drop-zone.ready { border-style: solid; border-color: var(--success-line); background: var(--success-soft); }
+    .drop-zone.error { border-style: solid; border-color: var(--danger-line); background: var(--danger-soft); }
+    .drop-zone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .dz-role { display: inline-block; margin-bottom: 12px; padding: 3px 11px; border-radius: 999px; background: var(--surface-3); color: var(--text-strong); font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .upload-symbol {
+      width: 56px; height: 56px; margin: 0 auto 12px; display: grid; place-items: center;
+      border-radius: 16px; background: var(--badge-bg); color: var(--badge-text); box-shadow: var(--shadow-xs);
+    }
+    .upload-symbol svg { width: 27px; height: 27px; }
+    .drop-zone strong { display: block; color: var(--text-strong); font-size: 1.22rem; font-weight: 750; }
+    .drop-zone .dz-hint { margin-top: 4px; color: var(--muted); font-size: 1rem; }
+    .browse-pill {
+      display: inline-block; margin-top: 14px; padding: 8px 18px; border-radius: 999px;
+      border: 1.5px solid var(--teal); color: var(--teal-text); background: var(--surface);
+      font-size: .95rem; font-weight: 750;
+    }
+    .drop-zone:hover .browse-pill { background: var(--teal); color: #fff; }
+    .dz-types { margin-top: 10px; color: var(--muted-2); font-size: .85rem; letter-spacing: .03em; }
+    .file-name { margin-top: 12px; font-size: 1rem; font-weight: 650; color: var(--text-strong); overflow-wrap: anywhere; }
+    .drop-zone .file-name:empty { display: none; }
+    .upload-feedback { display: none; margin-top: 10px; padding: 6px 14px; border-radius: 999px; font-size: .9rem; font-weight: 700; }
+    .upload-feedback.show { display: inline-flex; align-items: center; gap: 8px; }
+    .upload-feedback.success { background: var(--surface); color: var(--success); border: 1px solid var(--success-line); }
+    .upload-feedback.error { background: var(--surface); color: var(--danger); border: 1px solid var(--danger-line); }
+
+    .setting-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 20px; border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: 12px; background: var(--surface); padding: 12px 14px; color: var(--muted); font-size: .93rem; line-height: 1.5; }
+    .setting-note strong { color: var(--text-strong); }
+    .setting-icon { color: var(--teal-text); font-weight: 800; }
+    .benchmark-select {
+      width: 100%; height: 48px; border: 1px solid var(--line-strong); border-radius: 12px;
+      background: var(--surface); color: var(--text-strong); padding: 0 14px; font-size: 1rem; outline: none;
+    }
+    .benchmark-select:focus { border-color: var(--teal); box-shadow: var(--focus); }
+    .help { margin-top: 10px; color: var(--muted); font-size: .92rem; }
+    .key-options { margin-top: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+    .key-options summary { cursor: pointer; padding: 12px 14px; color: var(--text-strong); font-weight: 700; font-size: .95rem; }
+    .key-options summary span { margin-left: 6px; color: var(--muted); font-weight: 500; }
+    .key-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 2px 14px 0; }
+    .key-field span { display: block; margin-bottom: 6px; color: var(--text-strong); font-weight: 650; font-size: .92rem; }
+    .key-field input { width: 100%; height: 42px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--surface); color: var(--text-strong); padding: 0 12px; font: inherit; font-size: .95rem; outline: none; }
+    .key-field input:focus { border-color: var(--teal); box-shadow: var(--focus); }
+    .key-field input::placeholder { color: var(--muted); }
+    .key-help { margin: 0; padding: 10px 14px 14px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+
+    .action-row, .benchmark-actions { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 24px; }
+    .sample-note { color: var(--muted); font-size: .95rem; max-width: 62ch; }
+    .sample-note strong, .help strong { color: var(--text-strong); }
+    .actions, .sample-actions { display: flex; justify-content: flex-end; gap: 12px; flex: none; }
+
+    .btn {
+      appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      border: 1.5px solid transparent; border-radius: 12px; padding: 12px 20px;
+      font-size: 1rem; font-weight: 750; cursor: pointer; text-decoration: none; white-space: nowrap;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn svg { width: 19px; height: 19px; flex: none; }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); }
+    .btn-primary {
+      min-height: 54px; padding: 14px 28px; font-size: 1.06rem;
+      background: linear-gradient(135deg, var(--btn-primary-a), var(--btn-primary-b));
+      color: var(--btn-primary-text); box-shadow: 0 10px 22px -8px rgba(7,120,139,.6);
+    }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 14px 28px -8px rgba(7,120,139,.7); }
+    .btn-secondary { background: var(--surface); color: var(--text-strong); border-color: var(--line-strong); }
+    .btn-secondary:hover:not(:disabled) { border-color: var(--teal); color: var(--teal-text); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+    .sample-actions { margin-top: 22px; }
+
+    /* ---------- Bundled example ---------- */
+    .sample-card, .benchmark-hero, .benchmark-selector-card { border: 1px solid var(--line); border-radius: 18px; background: var(--surface-2); }
+    .sample-card { padding: 24px 26px; }
+    .parameter-kicker { color: var(--teal-text); font-size: .82rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .sample-card h3, .benchmark-hero h3 { margin: 8px 0 8px; color: var(--text-strong); font-size: 1.3rem; line-height: 1.25; font-weight: 750; }
+    .sample-card > .muted { font-size: 1rem; }
+    .sample-flow { display: flex; align-items: stretch; gap: 16px; margin-top: 20px; }
+    .sample-node { flex: 1; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 14px 16px; }
+    .sample-node small { display: block; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .sample-node strong { display: block; color: var(--text-strong); margin-top: 4px; font-size: 1.02rem; overflow-wrap: anywhere; }
+    .sample-arrow { align-self: center; color: var(--teal); font-weight: 900; font-size: 1.5rem; }
+
+    /* ---------- Benchmarks ---------- */
+    .benchmark-hero { padding: 26px; background: var(--surface-2); }
+    .benchmark-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+    .benchmark-label { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 999px; background: var(--cyan-soft); border: 1px solid var(--teal); color: var(--teal-text); font-size: .8rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .benchmark-hero p { margin: 0; color: var(--muted); font-size: 1rem; max-width: 76ch; }
+    .benchmark-links { display: flex; gap: 10px; flex-wrap: wrap; flex: none; }
+    .benchmark-links .btn { padding: 10px 16px; font-size: .95rem; }
+    .benchmark-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 22px 0; }
+    .benchmark-fact { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 14px 16px; }
+    .benchmark-fact strong { display: block; color: var(--text-strong); font-size: 1.55rem; line-height: 1.15; font-weight: 800; }
+    .benchmark-fact span { display: block; color: var(--muted); font-size: .9rem; margin-top: 3px; }
+    .benchmark-selector-card { padding: 20px 22px 20px 27px; background: var(--surface); box-shadow: inset 5px 0 0 var(--teal); }
+    .benchmark-selector-card label { display: block; color: var(--text-strong); font-weight: 700; font-size: 1rem; margin: 8px 0 8px; }
+    .dataset-profile { margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 16px 18px; }
+    .dataset-profile:empty { display: none; }
+    .dp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+    .dp-name { margin: 0; color: var(--text-strong); font-size: 1.12rem; font-weight: 800; line-height: 1.3; }
+    .dp-source { display: block; margin-top: 1px; color: var(--muted); font-size: .86rem; font-weight: 600; }
+    .dp-figure { flex: none; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); font-size: .8rem; font-weight: 700; }
+    .dataset-profile .dp-desc { margin: 8px 0 0; color: var(--text); font-size: .95rem; line-height: 1.5; max-width: 72ch; }
+    .dp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin-top: 14px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); }
+    .dp-stat { background: var(--surface); padding: 10px 12px; }
+    .dp-stat strong { display: block; color: var(--text-strong); font-size: 1.18rem; font-weight: 800; line-height: 1.2; }
+    .dp-stat span { display: block; color: var(--muted); font-size: .82rem; margin-top: 1px; }
+    .dataset-profile .dp-note { max-width: none; margin: 10px 0 0; padding: 9px 12px; border-left: 3px solid var(--teal); border-radius: 8px; background: var(--cyan-soft); color: var(--text); font-size: .9rem; line-height: 1.5; }
+    .dp-paper { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; color: var(--muted); font-size: .9rem; }
+    .dp-paper b { color: var(--text-strong); font-variant-numeric: tabular-nums; }
+    .dp-repl { display: flex; align-items: flex-start; gap: 9px; margin-top: 10px; color: var(--success); font-size: .9rem; line-height: 1.45; }
+    .dp-repl.is-warn { color: var(--warning); }
+    .dp-repl svg { width: 18px; height: 18px; flex: none; margin-top: 1px; }
+    .dp-foot { margin-top: 10px; color: var(--muted); font-size: .84rem; }
+    .dp-foot a { color: var(--teal-text); font-weight: 700; text-decoration: none; }
+    .dp-foot a:hover { text-decoration: underline; }
+    .dataset-collection { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .dataset-collection-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .dataset-collection-head strong { color: var(--text-strong); font-size: 1rem; }
+    .dataset-collection-head span { color: var(--muted); font-size: .9rem; }
+    .dataset-chip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+    .dataset-chip {
+      appearance: none; position: relative; min-height: 50px; border: 1.5px solid var(--line); border-radius: 12px;
+      background: var(--surface-2); color: var(--text); padding: 10px 40px 10px 14px; text-align: left; cursor: pointer;
+      font-size: .95rem; font-weight: 650; line-height: 1.3; transition: border-color .15s ease, background .15s ease;
+    }
+    .dataset-chip:hover:not(:disabled) { border-color: var(--teal); background: var(--cyan-soft); }
+    .dataset-chip.active { border-color: var(--teal); border-width: 2px; padding: 9.5px 40px 9.5px 13.5px; color: var(--text-strong); background: var(--cyan-soft); }
+    .dataset-chip.active::after {
+      content: ""; position: absolute; right: 12px; top: 50%; width: 20px; height: 20px; margin-top: -10px; border-radius: 50%;
+      background: var(--teal) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 12px no-repeat;
+    }
+    .dataset-chip:disabled, .dataset-chip.unavailable { opacity: .6; cursor: not-allowed; }
+    .dataset-chip small { display: block; margin-top: 2px; color: var(--muted-2); font-size: .8rem; font-weight: 600; }
+    .benchmark-note { display: flex; gap: 10px; margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 12px 14px; color: var(--muted); font-size: .92rem; }
+    .benchmark-note strong { color: var(--text-strong); }
+
+    /* ---------- Status ---------- */
+    .status { display: none; margin-top: 22px; border: 1px solid var(--line); border-left: 5px solid var(--teal); border-radius: 14px; padding: 16px 18px; background: var(--blue-soft); color: var(--text-strong); }
+    .status.show { display: flex; align-items: flex-start; gap: 14px; }
+    .status.error { background: var(--danger-soft); border-color: var(--danger-line); border-left-color: var(--danger); color: var(--danger); }
+    .status.success { background: var(--success-soft); border-color: var(--success-line); border-left-color: var(--green); color: var(--success); }
+    .status.error::before, .status.success::before {
+      flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%;
+      color: #fff; font-weight: 900; font-size: .95rem; line-height: 1;
+    }
+    .status.success::before { content: "✓"; background: var(--green); }
+    .status.error::before { content: "!"; background: var(--danger); }
+    .status-content { min-width: 0; }
+    .status-title { display: block; font-weight: 750; font-size: 1.05rem; }
+    .status-details { display: block; margin-top: 4px; font-size: .95rem; color: var(--muted); overflow-wrap: anywhere; }
+    .status.error .status-details, .status.success .status-details { color: inherit; opacity: .92; }
+    .spinner { flex: none; display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(7,147,168,.25); border-top-color: var(--teal); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---------- Results ---------- */
+    .results-panel { scroll-margin-top: 112px; }
+    .results-panel[hidden] { display: none !important; }
+    .empty { text-align: center; color: var(--muted); padding: 48px 16px 52px; font-size: 1.05rem; border: 2px dashed var(--line); border-radius: 16px; background: var(--surface-2); }
+    .results[hidden] { display: none; }
+
+    .result-hierarchy { display: grid; gap: 18px; }
+    .result-group { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: var(--surface-2); }
+    .primary-result-group { border-color: var(--teal); background: linear-gradient(180deg, var(--cyan-soft), var(--surface-2)); }
+    .result-group-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin-bottom: 12px; }
+    .result-group-kicker { color: var(--teal-text); font-size: .78rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    .result-group-head h3 { margin: 3px 0 0; color: var(--text-strong); font-size: 1.18rem; line-height: 1.3; }
+    .result-group-note { color: var(--muted); font-size: .9rem; text-align: right; }
+    .supporting-kpis { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+    .kpi {
+      position: relative; display: flex; flex-direction: column; min-height: 190px;
+      border: 1px solid var(--line); border-top: 5px solid var(--line-strong); border-radius: 16px;
+      background: var(--surface); padding: 20px 22px; box-shadow: var(--shadow-xs);
+    }
+    .primary-result-group .kpi { min-height: 180px; }
+    .primary-result-group .kpi-value { font-size: clamp(3rem, 5vw, 4.25rem); }
+    .kpi.is-primary { border-top-color: var(--teal); background: linear-gradient(180deg, var(--cyan-soft), var(--surface) 70%); }
+    .kpi-name { display: flex; align-items: center; gap: 10px; color: var(--text-strong); font-size: 1.08rem; font-weight: 800; letter-spacing: 0; }
+    .pill { font-size: .8125rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #fff; background: var(--teal); border-radius: 999px; padding: 3px 10px; }
+    html[data-theme="dark"] .pill { color: #04202a; }
+    .role-pill { background: var(--surface-strong); color: var(--text); border: 1px solid var(--line-strong); }
+    html[data-theme="dark"] .role-pill { color: var(--text-strong); }
+    .kpi-value { margin: 14px 0 10px; color: var(--text-strong); font-size: clamp(2.6rem, 4vw, 3.5rem); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.03em; }
+    .kpi-dir { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; font-size: .85rem; font-weight: 750; background: var(--surface-3); color: var(--text-strong); }
+    .kpi-dir.up { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-line); }
+    .kpi-dir.down { background: var(--blue-soft); color: var(--teal-text); border: 1px solid var(--line-strong); }
+    .kpi-hint { margin-top: auto; padding-top: 12px; color: var(--muted); font-size: .92rem; line-height: 1.45; }
+
+    .runline { margin: 18px 0 0; padding: 14px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--muted); font-size: .97rem; line-height: 1.6; font-variant-numeric: tabular-nums; }
+    .runline b { color: var(--text-strong); }
+    .run-warning-box { margin-top: 14px; border: 1px solid var(--warning-line); border-left: 5px solid var(--warning); background: var(--warning-soft); color: var(--warning); border-radius: 12px; padding: 14px 16px; font-size: .95rem; }
+    .run-warning-box strong { display: block; margin-bottom: 4px; }
+
+
+    .subsection { margin-top: 30px; }
+    .subsection-title { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 14px; }
+    .subsection-title h3 { margin: 0 0 4px; color: var(--text-strong); font-size: 1.25rem; font-weight: 750; }
+    .subsection-title p { margin: 0; color: var(--muted); font-size: .95rem; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; min-width: 940px; font-size: 1rem; }
+    th, td { padding: 15px 18px; border-bottom: 1px solid var(--line); text-align: right; vertical-align: middle; }
+    th:first-child, td:first-child { text-align: left; }
+    thead th { background: var(--surface-3); color: var(--text-strong); font-size: .95rem; font-weight: 800; white-space: nowrap; border-bottom: 2px solid var(--line-strong); }
+    tbody tr { transition: background .12s ease; }
+    tbody tr:hover { background: var(--surface-2); }
+    tbody tr:last-child td { border-bottom: 0; }
+    th.col-score, td.col-score { width: 270px; text-align: left; background: var(--cyan-soft); }
+    .filename { color: var(--text-strong); font-weight: 700; min-width: 170px; max-width: 320px; overflow-wrap: break-word; }
+    td .file-name { margin-top: 3px; font-size: .85rem; font-weight: 500; color: var(--muted); }
+    .num { font-variant-numeric: tabular-nums; color: var(--text-strong); white-space: nowrap; }
+    .score { display: flex; align-items: center; gap: 14px; }
+    .score-num { min-width: 3.4em; text-align: right; color: var(--text-strong); font-weight: 800; font-size: 1.08rem; font-variant-numeric: tabular-nums; }
+    .bar-track { flex: 1; min-width: 80px; height: 12px; border-radius: 999px; background: var(--surface-strong); overflow: hidden; }
+    .bar-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--teal), var(--green)); }
+
+    details.execution { border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); overflow: hidden; }
+    details.execution summary { cursor: pointer; padding: 15px 18px; color: var(--text-strong); font-size: 1rem; font-weight: 750; }
+    .details-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; padding: 4px 18px 18px; }
+    .detail { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 14px 16px; }
+    .detail span { display: block; color: var(--muted); font-size: .88rem; }
+    .detail strong { display: block; color: var(--text-strong); margin-top: 4px; font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+    /* ---------- Comparison with the paper ---------- */
+    .cmp { margin-top: 18px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-xs); overflow: hidden; }
+    .cmp[hidden] { display: none !important; }
+    .cmp-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 20px 22px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+    .cmp-head h3 { margin: 3px 0 4px; color: var(--text-strong); font-size: 1.18rem; line-height: 1.3; }
+    .cmp-sub { margin: 0; color: var(--muted); font-size: .93rem; max-width: 70ch; }
+    .cmp-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+    .seg { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--line-strong); border-radius: 11px; background: var(--surface); }
+    .seg[hidden] { display: none; }
+    .seg button { appearance: none; border: 0; border-radius: 8px; background: transparent; color: var(--muted); padding: 7px 13px; font-size: .88rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background .15s ease, color .15s ease; }
+    .seg button:hover { color: var(--text-strong); }
+    .seg button.active { background: var(--badge-bg); color: var(--badge-text); }
+    .cmp-body { padding: 20px 22px 8px; }
+    .cmp-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .cmp-stat { border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); padding: 13px 15px; min-width: 0; }
+    .cmp-stat.is-live { border-color: var(--cmp-live); background: var(--cmp-live-soft); }
+    .cmp-stat-label { display: block; color: var(--muted); font-size: .84rem; font-weight: 650; }
+    .cmp-stat-value { display: block; margin-top: 3px; color: var(--text-strong); font-size: 1.6rem; line-height: 1.15; font-weight: 800; letter-spacing: -.015em; }
+    .cmp-stat-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; color: var(--muted); font-size: .86rem; overflow-wrap: break-word; }
+    .cmp-flag { display: inline-flex; align-items: center; gap: 5px; padding: 1px 9px; border-radius: 999px; font-size: .8rem; font-weight: 750; white-space: nowrap; }
+    .cmp-flag.ahead { background: var(--success-soft); color: var(--success); border: 1px solid var(--success-line); }
+    .cmp-flag.behind { background: var(--warning-soft); color: var(--warning); border: 1px solid var(--warning-line); }
+    .cmp-takeaway { margin: 16px 0 6px; padding: 12px 15px; border-left: 4px solid var(--cmp-live); border-radius: 10px; background: var(--cyan-soft); color: var(--text); font-size: .97rem; line-height: 1.55; }
+    .cmp-takeaway b { color: var(--text-strong); }
+    .cmp-chart { position: relative; margin-top: 10px; min-height: 120px; }
+    .cmp-chart svg { display: block; width: 100%; overflow: visible; font-family: inherit; }
+    .cmp-svg text { fill: var(--text); font-size: 13px; }
+    .cmp-svg .t-strong { fill: var(--text-strong); font-weight: 750; }
+    .cmp-svg .t-label { fill: var(--text-strong); font-weight: 650; font-size: 13.5px; }
+    .cmp-svg .t-sub { fill: var(--muted); font-size: 11.5px; }
+    .cmp-svg .t-axis { fill: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+    .cmp-svg .t-value { fill: var(--text-strong); font-size: 14px; font-weight: 650; font-variant-numeric: tabular-nums; }
+    .cmp-svg .t-value.is-key { font-weight: 800; }
+    .cmp-svg .t-ref { fill: var(--muted); font-size: 11.5px; font-weight: 650; }
+    .cmp-svg .t-lead { fill: var(--teal-text); font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .cmp-svg .grid { stroke: var(--cmp-grid); stroke-width: 1; }
+    .cmp-svg .axis { stroke: var(--line-strong); stroke-width: 1; }
+    .cmp-svg .ref-line { stroke: var(--cmp-ref); stroke-width: 1; opacity: .75; }
+    .cmp-svg .band-live { fill: var(--cmp-live-soft); }
+    .cmp-svg .band-paper { fill: var(--cmp-paper-soft); }
+    .cmp-svg .band-focus { fill: var(--surface-3); }
+    .cmp-svg .lead-band { fill: var(--cmp-live); opacity: .13; }
+    .cmp-svg .row-sep { stroke: var(--line); stroke-width: 1; opacity: .7; }
+    .cmp-svg .k-live { --c: var(--cmp-live); }
+    .cmp-svg .k-paper { --c: var(--cmp-paper); }
+    .cmp-svg .k-other { --c: var(--cmp-other); }
+    .cmp-svg .whisker { stroke: var(--c); stroke-width: 1.6; stroke-linecap: round; }
+    .cmp-svg .box { fill: var(--c); fill-opacity: .3; }
+    .cmp-svg .k-other .box { fill-opacity: .42; }
+    .cmp-svg .mean { fill: var(--c); stroke: var(--surface); stroke-width: 2; }
+    .cmp-svg .mean-only { fill: var(--surface); stroke: var(--c); stroke-width: 2.2; }
+    .cmp-svg .k-other .mean-only { stroke: #8496a3; }
+    html[data-theme="dark"] .cmp-svg .k-other .mean-only { stroke: #7b8f9d; }
+    .cmp-svg .outlier { fill: none; stroke: var(--c); stroke-width: 1.3; }
+    .cmp-svg .link { stroke: var(--line-strong); stroke-width: 2; stroke-linecap: round; }
+    .cmp-svg .live-ring { fill: none; stroke: var(--cmp-live); stroke-width: 2.6; }
+    .cmp-svg .t-glyph { fill: var(--muted-2); font-size: 11px; }
+    .cmp-svg .hit { fill: transparent; cursor: default; }
+    .cmp-svg .row:focus { outline: none; }
+    .cmp-svg .row:focus .hit { stroke: var(--teal); stroke-width: 2; }
+    .cmp-tip {
+      position: absolute; z-index: 5; pointer-events: none; min-width: 210px; max-width: 320px;
+      padding: 11px 13px; border: 1px solid var(--line-strong); border-radius: 12px;
+      background: var(--surface); box-shadow: var(--shadow-md); color: var(--text); font-size: .86rem; line-height: 1.45;
+      opacity: 0; transform: translateY(4px); transition: opacity .12s ease, transform .12s ease;
+    }
+    .cmp-tip.show { opacity: 1; transform: none; }
+    .cmp-tip strong { display: block; color: var(--text-strong); font-size: .95rem; }
+    .cmp-tip .tip-sub { display: block; color: var(--muted); font-size: .8rem; margin-bottom: 6px; }
+    .cmp-tip dl { display: grid; grid-template-columns: auto auto; gap: 2px 14px; margin: 0; }
+    .cmp-tip dt { color: var(--muted); }
+    .cmp-tip dd { margin: 0; text-align: right; color: var(--text-strong); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .cmp-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; margin: 4px 0 0; padding: 12px 0 4px; color: var(--muted); font-size: .86rem; }
+    .cmp-legend span { display: inline-flex; align-items: center; gap: 7px; }
+    .cmp-legend svg { width: 26px; height: 14px; flex: none; overflow: visible; }
+    .cmp-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 22px 18px; border-top: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font-size: .85rem; line-height: 1.5; }
+    .cmp-foot .btn { padding: 9px 15px; font-size: .9rem; }
+    .cmp-foot a { color: var(--teal-text); font-weight: 700; text-decoration: none; }
+    .cmp-foot a:hover { text-decoration: underline; }
+
+    /* ---------- Term explanations ---------- */
+    .th-term { display: inline-flex; align-items: center; gap: 6px; }
+    .term-info {
+      appearance: none; display: inline-grid; place-items: center; width: 22px; height: 22px; padding: 0; margin: 0 2px;
+      border: 0; border-radius: 50%; background: transparent; color: var(--muted-2); cursor: help; vertical-align: middle;
+      transition: color .15s ease, background .15s ease;
+    }
+    .term-info svg { width: 17px; height: 17px; }
+    .term-info:hover, .term-info[aria-expanded="true"] { color: var(--teal-text); background: var(--cyan-soft); }
+    .term-pop {
+      position: fixed; z-index: 80; width: min(340px, calc(100vw - 24px)); padding: 13px 15px 14px;
+      border: 1px solid var(--line-strong); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow-md);
+      color: var(--text); font-size: .9rem; line-height: 1.5; text-align: left; font-weight: 400; white-space: normal;
+    }
+    .term-pop[hidden] { display: none; }
+    .term-pop strong { display: block; color: var(--text-strong); font-size: .98rem; }
+    .term-pop .tp-sub { display: block; color: var(--muted); font-size: .82rem; margin-bottom: 6px; }
+    .term-pop .tp-formula { display: block; margin-top: 8px; padding: 6px 9px; border-radius: 8px; background: var(--surface-2); color: var(--text-strong); font-size: .86rem; }
+    .term-pop .tp-dir { display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 999px; background: var(--surface-3); color: var(--text-strong); font-size: .8rem; font-weight: 750; }
+
+    /* ---------- Citation dialog ---------- */
+    .cite-dialog {
+      width: min(680px, calc(100vw - 32px)); max-height: calc(100vh - 48px); padding: 0; overflow: auto;
+      border: 1px solid var(--line-strong); border-radius: var(--radius-xl); background: var(--surface); color: var(--text);
+      box-shadow: var(--shadow-md);
+    }
+    .cite-dialog::backdrop { background: rgba(6,24,36,.55); backdrop-filter: blur(3px); }
+    .cite-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 24px 26px 6px; }
+    .cite-head h2 { margin: 0 0 4px; color: var(--text-strong); font-size: 1.35rem; font-weight: 800; }
+    .cite-head p { margin: 0; color: var(--muted); font-size: .97rem; }
+    .cite-close { appearance: none; flex: none; width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--muted); cursor: pointer; }
+    .cite-close:hover { color: var(--text-strong); border-color: var(--line-strong); }
+    .cite-close svg { width: 18px; height: 18px; }
+    .cite-ref { margin: 16px 26px 0; padding: 16px 18px; border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: 12px; background: var(--surface-2); }
+    .cite-ref blockquote { margin: 0; color: var(--text-strong); font-size: 1rem; line-height: 1.6; overflow-wrap: anywhere; }
+    .cite-ref-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .cite-ref-actions a, .cite-foot a { color: var(--teal-text); font-weight: 700; text-decoration: none; }
+    .cite-ref-actions a:hover, .cite-foot a:hover { text-decoration: underline; }
+    .cite-copy { padding: 8px 14px; font-size: .9rem; }
+    .cite-copy.is-done { border-color: var(--success-line); color: var(--success); background: var(--success-soft); }
+    .cite-bib-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 20px 26px 8px; color: var(--text-strong); font-weight: 800; }
+    .cite-bib {
+      margin: 0 26px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-3);
+      color: var(--text-strong); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .8rem; line-height: 1.55;
+      white-space: pre-wrap; overflow-wrap: anywhere;
+    }
+    .cite-foot { margin: 14px 26px 24px; color: var(--muted); font-size: .88rem; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 1240px) {
+      .app-shell { grid-template-columns: 240px minmax(0,1fr); gap: 22px; }
+      .process-flow { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+      .flow-step::after { display: none; }
+    }
+    @media (max-width: 1040px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; grid-template-columns: 1fr; }
+      .side-nav, .legal-card { display: none; }
+      .legal-bottom { display: block; }
+      .workflow-card { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 20px; padding: 18px 20px 6px; }
+      .workflow-card .side-kicker { grid-column: 1 / -1; }
+      .workflow-step, .workflow-step + .workflow-step { border-top: 0; }
+      .brand-meta { display: none; }
+      .mode-switch { grid-template-columns: 1fr; }
+      .supporting-kpis { grid-template-columns: 1fr; }
+      .result-group-head { align-items: flex-start; flex-direction: column; }
+      .result-group-note { text-align: left; }
+      .kpi { min-height: 0; }
+      .benchmark-facts, .details-grid { grid-template-columns: repeat(2, 1fr); }
+      .cmp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 760px) {
+      .header-shell { min-height: 76px; }
+      .brand-logo img { height: 48px; }
+      html[data-theme="dark"] .brand-logo img { height: 40px; }
+      .theme-btn { padding: 0 12px; }
+      .theme-btn span { display: none; }
+      .app-shell { padding-top: 18px; }
+      .sidebar { display: none; }
+      .hero { padding: 26px 20px 22px; border-radius: 18px; }
+      .hero-top { flex-direction: column; gap: 16px; }
+      .hero-actions { width: 100%; flex-wrap: wrap; }
+      .hero-action { flex: 1 1 auto; justify-content: center; padding: 0 14px; }
+      .cite-dialog .btn { width: auto; }
+      .dp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cite-head, .cite-bib-head { padding-left: 0; padding-right: 0; }
+      .cite-head { padding: 20px 18px 4px; }
+      .cite-ref, .cite-bib, .cite-bib-head, .cite-foot { margin-left: 18px; margin-right: 18px; }
+      .process-flow { grid-template-columns: 1fr; }
+      .card-head, .card-body { padding-left: 18px; padding-right: 18px; }
+      .setup-grid { grid-template-columns: 1fr; }
+      .drop-zone { min-height: 200px; }
+      .benchmark-top, .action-row, .benchmark-actions, .subsection-title { flex-direction: column; align-items: stretch; }
+      .actions, .sample-actions, .benchmark-links { width: 100%; }
+      .btn, .actions .btn, .sample-actions .btn, .benchmark-actions .btn { width: 100%; }
+      .sample-flow { flex-direction: column; }
+      .sample-arrow { transform: rotate(90deg); }
+      .benchmark-facts, .details-grid, .key-grid { grid-template-columns: 1fr; }
+      .cmp-head, .cmp-body { padding-left: 14px; padding-right: 14px; }
+      .cmp-controls, .seg { width: 100%; }
+      .seg button { flex: 1; padding: 7px 8px; }
+      .cmp-stat-value { font-size: 1.35rem; }
+      .cmp-foot { flex-direction: column; align-items: stretch; padding-left: 14px; padding-right: 14px; }
+    }
+    @media (max-width: 520px) {
+      .cmp-stats { grid-template-columns: 1fr; gap: 8px; }
+      .cmp-stat { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; align-items: baseline; padding: 11px 14px; }
+      .cmp-stat-label { grid-column: 1; grid-row: 1; }
+      .cmp-stat-value { grid-column: 2; grid-row: 1 / span 2; margin: 0; align-self: center; }
+      .cmp-stat-sub { grid-column: 1; grid-row: 2; margin-top: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body id="top">
+  {#- Copyright and licence notice (GNU GPL v3, section 5(d)); shown in the sidebar and, on narrow screens, at the end of the page. -#}
+  {% set legal_notice %}
+    <p class="legal-title">REMEMBER {{ app_version }}</p>
+    <p>© 2026 <span class="who">Emilio Incerto<sup>1</sup></span>, <span class="who">Andrea Vandin<sup>2,3</sup></span>, <span class="who">Sima Sarv Ahrabi<sup>2</sup></span></p>
+    <p class="legal-aff"><sup>1</sup>IMT Lucca · <sup>2</sup>Sant’Anna School for Advanced Studies, Pisa · <sup>3</sup>DTU Technical University of Denmark</p>
+    <p>Free software under the GNU GPL v3 or later. It comes with no warranty.</p>
+    <p class="legal-links"><a href="{{ url_for('license_text') }}" target="_blank" rel="noopener">Licence</a> · <a href="{{ url_for('third_party_notices') }}" target="_blank" rel="noopener">Third-party notices</a></p>
+  {% endset %}
+  <header class="app-header">
+    <div class="header-shell">
+      <a class="brand" href="#top" aria-label="REMEMBER — Stochastic Conformance Tool">
+        <span class="brand-logo"><img src="{{ url_for('static', filename='logo-header.png') }}" alt="REMEMBER — Stochastic Process Mining with Adaptive Memory"></span>
+        <span class="brand-meta">
+          <strong>Stochastic conformance checking</strong>
+          <span>with Variable-Length Markov Chains</span>
+        </span>
+      </a>
+      <div class="header-actions">
+        <div class="theme-toggle" role="group" aria-label="Theme switcher">
+          <button class="theme-btn" id="theme-light" type="button" aria-label="Use light theme" title="Light theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <span>Light</span>
+          </button>
+          <button class="theme-btn" id="theme-dark" type="button" aria-label="Use dark theme" title="Dark theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.7A8.5 8.5 0 1 1 11.3 3 6.8 6.8 0 0 0 21 12.7Z"/></svg>
+            <span>Dark</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Dashboard information">
+      <section class="side-card workflow-card" aria-label="REMEMBER workflow">
+        <div class="side-kicker">How to use</div>
+        <div class="workflow-step"><span class="workflow-number">1</span><div><strong>Choose</strong><span>Your logs, the example, or a paper benchmark.</span></div></div>
+        <div class="workflow-step"><span class="workflow-number">2</span><div><strong>Run</strong><span>REMEMBER learns from the reference log and scores the others.</span></div></div>
+        <div class="workflow-step"><span class="workflow-number">3</span><div><strong>Read</strong><span>See the scores and download them as CSV.</span></div></div>
+      </section>
+
+      <nav class="side-card side-nav" aria-label="Page sections">
+        <a class="nav-link" href="#workspace">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h16M4 12h16M4 19h16"/></svg></span>
+          Setup
+        </a>
+        <a class="nav-link" href="#results-panel">
+          <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19V3"/></svg></span>
+          Results
+        </a>
+      </nav>
+
+      <section class="side-card legal-notice legal-card" aria-label="Copyright and licence">{{ legal_notice }}</section>
+    </aside>
+
+    <main class="content">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-top">
+          <div>
+            <div class="hero-kicker">Stochastic process mining</div>
+            <h1 id="page-title">Check how well event logs fit a learned model</h1>
+            <p>REMEMBER learns a Variable-Length Markov Chain (VLMC) from a reference log and scores other logs against it. The main score is uEMSC; three more measures help you read it.</p>
+          </div>
+          <div class="hero-actions">
+            {% if preprint_url %}
+            <a class="hero-action" href="{{ preprint_url }}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+              <span>Tool preprint</span>
+            </a>
+            {% else %}
+            <span class="hero-action is-soon" aria-disabled="true" title="The link appears here when the preprint is online.">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+              <span>Tool preprint</span><span class="soon-tag">soon</span>
+            </span>
+            {% endif %}
+            <button type="button" class="hero-action is-primary" id="cite-open" aria-haspopup="dialog" aria-controls="cite-dialog">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.6 6.2C6.6 7.4 4.6 10 4.6 13.4V18h5.6v-5.6H7.4c.1-2 1.3-3.6 3.2-4.4zM19 6.2c-3 1.2-5 3.8-5 7.2V18h5.6v-5.6h-2.8c.1-2 1.3-3.6 3.2-4.4z"/></svg>
+              <span>Cite us</span>
+            </button>
+          </div>
+        </div>
+        <div class="process-flow" aria-label="REMEMBER analysis workflow">
+          <div class="flow-step"><span class="flow-num">1</span><div><small>Input</small><strong>A reference log and the logs to check</strong></div></div>
+          <div class="flow-step is-learning"><span class="flow-num">2</span><div><small>Learning</small><strong>A VLMC is learned from the reference log</strong></div></div>
+          <div class="flow-step is-checking"><span class="flow-num">3</span><div><small>Check</small><strong>Each log is scored against the VLMC</strong></div></div>
+          <div class="flow-step"><span class="flow-num">4</span><div><small>Report</small><strong>uEMSC and three supporting measures</strong></div></div>
+        </div>
+        <div class="method-note" role="note"><strong>Note:</strong> the logs to check are only scored. They are never used to learn the model.</div>
+      </section>
+
+      <section id="workspace" class="dashboard-card" style="scroll-margin-top:112px">
+        <div class="card-head">
+          <div class="eyebrow">Step 1 · Setup</div>
+          <h2>Choose what to run</h2>
+          <p>Your own logs, a small example, or a benchmark from the paper.</p>
+        </div>
+
+        <div class="card-body">
+          <div class="mode-switch" role="tablist" aria-label="Evaluation mode">
+            <button class="mode-button active" type="button" data-mode="upload" role="tab" aria-selected="true">
+              <span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M5 14v5h14v-5"/></svg></span>
+              <span class="mode-text"><strong>Your logs</strong><span>One reference log, one or more logs to check</span></span>
+            </button>
+            <button class="mode-button" type="button" data-mode="sample" role="tab" aria-selected="false">
+              <span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.5a2 2 0 0 1-.2.9L4.7 20.5a1 1 0 0 0 .9 1.5h12.8a1 1 0 0 0 .9-1.5l-5.1-10.1a2 2 0 0 1-.2-.9V2"/><path d="M8.5 2h7M7 16h10"/></svg></span>
+              <span class="mode-text"><strong>Example</strong><span>A quick run on small included logs</span></span>
+            </button>
+            <button class="mode-button" type="button" data-mode="benchmarks" role="tab" aria-selected="false">
+              <span class="mode-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg></span>
+              <span class="mode-text"><strong>Paper benchmarks</strong><span>The 11 datasets of the paper, rerun here</span></span>
+            </button>
+          </div>
+
+          <div id="mode-upload" class="mode-panel" data-mode-panel="upload">
+            <form id="run-form">
+              <div class="setup-grid">
+                <label class="drop-zone" data-input="train-input" tabindex="0">
+                  <input id="train-input" name="train" type="file" accept=".xes,.gz,.csv,.txt">
+                  <div>
+                    <span class="dz-role">Reference</span>
+                    <div class="upload-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4M5 14v5h14v-5"/></svg></div>
+                    <strong>Reference log</strong>
+                    <div class="dz-hint">The model is learned from this log.<br>Drop one file here</div>
+                    <span class="browse-pill">Browse file</span>
+                    <div class="dz-types">XES · CSV · TXT · GZ</div>
+                    <div id="train-name" class="file-name">No file selected</div>
+                    <div id="train-feedback" class="upload-feedback" aria-live="polite"></div>
+                  </div>
+                </label>
+
+                <label class="drop-zone" data-input="tests-input" tabindex="0">
+                  <input id="tests-input" name="tests" type="file" accept=".xes,.gz,.csv,.txt" multiple>
+                  <div>
+                    <span class="dz-role">To check</span>
+                    <div class="upload-symbol" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
+                    <strong>Logs to check</strong>
+                    <div class="dz-hint">These logs are scored against the model.<br>Drop one or more files here</div>
+                    <span class="browse-pill">Browse files</span>
+                    <div class="dz-types">XES · CSV · TXT · GZ</div>
+                    <div id="tests-name" class="file-name">No files selected</div>
+                    <div id="tests-feedback" class="upload-feedback" aria-live="polite"></div>
+                  </div>
+                </label>
+              </div>
+
+              <details class="key-options">
+                <summary>Column and attribute names<span>optional</span></summary>
+                <div class="key-grid">
+                  <label class="key-field"><span>Case id</span><input name="case_key" type="text" maxlength="200" autocomplete="off" spellcheck="false" placeholder="concept:name (trace)"></label>
+                  <label class="key-field"><span>Activity</span><input name="activity_key" type="text" maxlength="200" autocomplete="off" spellcheck="false" placeholder="concept:name"></label>
+                  <label class="key-field"><span>Timestamp</span><input name="timestamp_key" type="text" maxlength="200" autocomplete="off" spellcheck="false" placeholder="time:timestamp"></label>
+                </div>
+                <p class="key-help">Only needed if your logs use other names; empty fields keep the defaults. <strong>XES:</strong> attribute keys (the case id comes from the trace, or from each event if the trace has none). <strong>CSV:</strong> column names (found automatically when empty). The names apply to every uploaded log; TXT logs ignore them.</p>
+              </details>
+
+              <div class="setting-note"><span class="setting-icon" aria-hidden="true">ⓘ</span><span><strong>Settings:</strong> none to choose. The VLMC is learned without pruning, as in the paper.</span></div>
+
+              <div class="action-row">
+                <div class="sample-note"><strong>Formats:</strong> XES, CSV and TXT, also gzipped (.gz). Events are ordered by timestamp; without one, the file order is kept.</div>
+                <div class="actions"><button id="run-button" class="btn btn-primary" type="submit"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5Z"/></svg>Run conformance check</button></div>
+              </div>
+            </form>
+          </div>
+
+          <div id="mode-sample" class="mode-panel" data-mode-panel="sample" hidden>
+            <div class="sample-card">
+              <div class="parameter-kicker">Included example</div>
+              <h3>Try REMEMBER without your own data</h3>
+              <div class="muted">One reference log and three small logs to check. The run takes a few seconds.</div>
+              <div class="sample-flow">
+                <div class="sample-node"><small>Reference</small><strong>reference.xes</strong></div>
+                <div class="sample-arrow" aria-hidden="true">→</div>
+                <div class="sample-node"><small>Logs to check</small><strong>{{ sample_checks|join(" · ") }}</strong></div>
+              </div>
+            </div>
+            <div class="sample-actions"><button id="sample-button" class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5Z"/></svg>Run example</button></div>
+          </div>
+
+          <div id="mode-benchmarks" class="mode-panel" data-mode-panel="benchmarks" hidden>
+            <div class="benchmark-hero">
+              <div class="benchmark-top">
+                <div>
+                  <span class="benchmark-label">Paper benchmarks</span>
+                  <h3>Rerun the experiments of the paper</h3>
+                  <p>Pick a dataset. REMEMBER runs the 10 splits of the paper: for each, it learns a VLMC from one half of the log and scores the other half. Your result is then compared with the VLMC and the 8 other techniques in the paper.</p>
+                </div>
+                <div class="benchmark-links">
+                  <a class="btn btn-secondary btn-link" href="https://doi.org/10.5281/zenodo.13348234" target="_blank" rel="noopener" title="Replicability package of the paper (Zenodo)">Replicability package ↗</a>
+                  <a class="btn btn-secondary btn-link" href="https://doi.org/10.1016/j.is.2025.102561" target="_blank" rel="noopener">Paper ↗</a>
+                </div>
+              </div>
+
+              <div class="benchmark-facts">
+                <div class="benchmark-fact"><strong>{{ benchmark_manifest|length }}</strong><span>benchmark datasets</span></div>
+                <div class="benchmark-fact"><strong>10</strong><span>paired splits per dataset</span></div>
+                <div class="benchmark-fact"><strong>≈50 / 50</strong><span>reference / check split</span></div>
+                <div class="benchmark-fact"><strong>Live</strong><span>computed now, not copied from the paper</span></div>
+              </div>
+
+              <div class="benchmark-selector-card">
+                <div class="parameter-kicker">Benchmark dataset</div>
+                <label for="benchmark-dataset">Choose a dataset</label>
+                <select id="benchmark-dataset" class="benchmark-select">
+                  {% for item in benchmark_manifest %}
+                  <option value="{{ item.id }}" {% if not item.installed %}disabled{% endif %}>{{ item.name }}{% if not item.installed %} — data not installed{% endif %}</option>
+                  {% endfor %}
+                </select>
+                <div id="dataset-profile" class="dataset-profile" aria-live="polite"></div>
+                <div class="dataset-collection">
+                  <div class="dataset-collection-head"><strong>All datasets</strong><span>{{ benchmark_manifest|length }} datasets</span></div>
+                  <div class="dataset-chip-grid" aria-label="Available benchmark datasets">
+                    {% for item in benchmark_manifest %}
+                    <button type="button" class="dataset-chip{% if not item.installed %} unavailable{% endif %}" data-dataset-id="{{ item.id }}" {% if not item.installed %}disabled{% endif %}>{{ item.name }}{% if not item.installed %}<small>data not installed</small>{% endif %}</button>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-note"><span class="setting-icon" aria-hidden="true">ⓘ</span><span><strong>Same as the paper:</strong> engine, settings, uEMSC formula and splits. A run gives the published values.</span></div>
+
+              <div class="benchmark-actions">
+                <div class="help"><strong>Run time:</strong> under a minute for BPIC13 Open and Closed Problems, a few minutes for most datasets, up to about 20 minutes for Road Traffic Fines.</div>
+                <button id="benchmark-button" class="btn btn-primary" type="button"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5Z"/></svg>Run benchmark</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="status" class="status" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="results-panel" class="dashboard-card results-panel">
+        <div class="card-head">
+          <div class="eyebrow">Step 2 · Results</div>
+          <h2>Results</h2>
+          <p id="report-subtitle">Scores of the logs against the VLMC learned from the reference log.</p>
+        </div>
+
+        <div class="card-body">
+          <div id="empty-state" class="empty">Results appear here after a run.</div>
+          <div id="results" class="results" hidden>
+            <div class="result-hierarchy">
+              <section class="result-group primary-result-group" aria-labelledby="primary-result-heading">
+                <div class="result-group-head">
+                  <div>
+                    <div class="result-group-kicker">Conformance</div>
+                    <h3 id="primary-result-heading">Main score</h3>
+                  </div>
+                  <span class="result-group-note">How well the logs fit the model</span>
+                </div>
+                <article class="kpi is-primary">
+                  <div class="kpi-name">uEMSC <button type="button" class="term-info" data-term="uemsc" aria-label="What is uEMSC?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button><span class="pill">primary</span></div>
+                  <div id="mean-uemsc" class="kpi-value">—</div>
+                  <span class="kpi-dir up">↑ Higher is better</span>
+                  <div id="uemsc-kpi-hint" class="kpi-hint">1 = the model gives each trace exactly its frequency in the log.</div>
+                </article>
+              </section>
+
+              <section class="result-group supporting-result-group" aria-labelledby="supporting-result-heading">
+                <div class="result-group-head">
+                  <div>
+                    <div class="result-group-kicker">Other measures</div>
+                    <h3 id="supporting-result-heading">To help read uEMSC</h3>
+                  </div>
+                  <span class="result-group-note">They do not replace uEMSC</span>
+                </div>
+                <div class="supporting-kpis">
+                  <article class="kpi">
+                    <div class="kpi-name">ER-U <button type="button" class="term-info" data-term="eru" aria-label="What is ER-U?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button><span class="pill role-pill">complementary</span></div>
+                    <div id="mean-er" class="kpi-value">—</div>
+                    <span class="kpi-dir down">↓ Lower is better</span>
+                    <div class="kpi-hint">Bits needed to describe one trace with the model.</div>
+                  </article>
+                  <article class="kpi">
+                    <div class="kpi-name">Predictive perplexity <button type="button" class="term-info" data-term="perplexity" aria-label="What is predictive perplexity?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button><span class="pill role-pill">diagnostic</span></div>
+                    <div id="mean-perplexity" class="kpi-value">—</div>
+                    <span class="kpi-dir down">↓ Lower is better</span>
+                    <div class="kpi-hint">How hard the next activity is to predict, on traces the model can produce.</div>
+                  </article>
+                </div>
+              </section>
+            </div>
+
+            <p id="run-line" class="runline">—</p>
+            <div id="run-warning" class="run-warning-box" hidden></div>
+
+            <section id="paper-comparison" class="cmp" hidden aria-labelledby="cmp-title">
+              <div class="cmp-head">
+                <div>
+                  <div class="result-group-kicker">Comparison with the paper</div>
+                  <h3 id="cmp-title">Your run and the published results</h3>
+                  <p id="cmp-subtitle" class="cmp-sub">Your VLMC result, the one in the paper, and the 8 other techniques of the paper, on the same dataset.</p>
+                </div>
+                <div class="cmp-controls">
+                  <div class="seg" role="tablist" aria-label="Comparison view">
+                    <button type="button" class="active" data-cmp-view="detail" role="tab" aria-selected="true">This dataset</button>
+                    <button type="button" data-cmp-view="overview" role="tab" aria-selected="false">All 11 datasets</button>
+                  </div>
+                  <div class="seg" id="cmp-scale-seg" role="group" aria-label="Chart scale">
+                    <button type="button" class="active" data-cmp-scale="fit" aria-pressed="true">Zoom to data</button>
+                    <button type="button" data-cmp-scale="full" aria-pressed="false">Full 0–1 scale</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="cmp-detail" class="cmp-body">
+                <div class="cmp-stats">
+                  <div class="cmp-stat is-live"><span class="cmp-stat-label">Rank of your run</span><span id="cmp-rank" class="cmp-stat-value">—</span><span id="cmp-rank-sub" class="cmp-stat-sub">—</span></div>
+                  <div class="cmp-stat"><span class="cmp-stat-label">Best competitor (paper)</span><span id="cmp-best" class="cmp-stat-value">—</span><span id="cmp-best-sub" class="cmp-stat-sub">—</span></div>
+                  <div class="cmp-stat"><span class="cmp-stat-label">Gap to best competitor</span><span id="cmp-lead" class="cmp-stat-value">—</span><span id="cmp-lead-sub" class="cmp-stat-sub">—</span></div>
+                  <div class="cmp-stat"><span class="cmp-stat-label">VLMC in the paper</span><span id="cmp-paper" class="cmp-stat-value">—</span><span id="cmp-paper-sub" class="cmp-stat-sub">—</span></div>
+                </div>
+                <p id="cmp-takeaway" class="cmp-takeaway">—</p>
+                <div id="cmp-chart" class="cmp-chart"></div>
+                <div class="cmp-legend" aria-label="Chart legend">
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><rect x="1" y="2" width="24" height="10" rx="3" fill="var(--cmp-live)" fill-opacity=".3"/><circle cx="13" cy="7" r="4.5" fill="var(--cmp-live)" stroke="var(--surface)" stroke-width="2"/></svg>VLMC · your run</span>
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><rect x="1" y="2" width="24" height="10" rx="3" fill="var(--cmp-paper)" fill-opacity=".3"/><circle cx="13" cy="7" r="4.5" fill="var(--cmp-paper)" stroke="var(--surface)" stroke-width="2"/></svg>VLMC · paper</span>
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><rect x="1" y="2" width="24" height="10" rx="3" fill="var(--cmp-other)" fill-opacity=".42"/><circle cx="13" cy="7" r="4.5" fill="var(--cmp-other)" stroke="var(--surface)" stroke-width="2"/></svg>Competitor techniques · paper</span>
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="4.5" fill="var(--surface)" stroke="var(--muted-2)" stroke-width="2.2"/></svg>Only the mean is published</span>
+                  <span>Dot = mean of 10 splits · box = middle 50% · line = whiskers · ○ = outliers</span>
+                </div>
+              </div>
+
+              <div id="cmp-overview" class="cmp-body" hidden>
+                <p id="cmp-overview-takeaway" class="cmp-takeaway">—</p>
+                <div id="cmp-overview-chart" class="cmp-chart"></div>
+                <div class="cmp-legend" aria-label="Chart legend">
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="5" fill="var(--cmp-other)" stroke="var(--surface)" stroke-width="2"/></svg>Best competitor · paper</span>
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="5" fill="var(--cmp-paper)" stroke="var(--surface)" stroke-width="2"/></svg>VLMC · paper</span>
+                  <span><svg viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="6" fill="none" stroke="var(--cmp-live)" stroke-width="2.4"/></svg>VLMC · your runs in this session</span>
+                  <span>Right column: VLMC (paper) minus best competitor</span>
+                </div>
+              </div>
+
+              <div class="cmp-foot">
+                <span id="cmp-source">Paper values: Incerto, Vandin, Sarv Ahrabi, <a href="https://doi.org/10.1016/j.is.2025.102561" target="_blank" rel="noopener">Information Systems 133 (2025)</a>, Figs. 4–5, read from the vector data of the figures (±0.001).</span>
+                <button id="cmp-download" class="btn btn-secondary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download comparison (CSV)</button>
+              </div>
+            </section>
+
+
+            <div id="per-log-block" class="subsection">
+              <div class="subsection-title">
+                <div><h3 id="per-log-title">Per log</h3><p id="per-log-note">Bar: uEMSC from 0 to 1.</p></div>
+                <button id="download-button" class="btn btn-secondary" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>Download results (CSV)</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th id="result-name-heading">Log</th><th class="col-score"><span class="th-term">uEMSC<button type="button" class="term-info" data-term="uemsc" aria-label="What is uEMSC?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></span></th><th><span class="th-term">ER-U<button type="button" class="term-info" data-term="eru" aria-label="What is ER-U?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></span></th><th><span class="th-term">Predictive perplexity<button type="button" class="term-info" data-term="perplexity" aria-label="What is predictive perplexity?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></span></th><th><span class="th-term">Trace support<button type="button" class="term-info" data-term="support" aria-label="What is trace support?" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.01"/></svg></button></span></th><th>Time</th></tr></thead>
+                  <tbody id="result-body"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="subsection">
+              <details class="execution">
+                <summary>Run details</summary>
+                <div class="details-grid">
+                  <div class="detail"><span>Learning time</span><strong id="learning-time">—</strong></div>
+                  <div class="detail"><span>Scoring time</span><strong id="checking-time">—</strong></div>
+                  <div class="detail"><span>Total time</span><strong id="total-time">—</strong></div>
+                  <div class="detail"><span id="reference-traces-label">Reference traces</span><strong id="reference-traces">—</strong></div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="legal-notice legal-bottom" aria-label="Copyright and licence">{{ legal_notice }}</section>
+    </main>
+  </div>
+
+  <dialog id="cite-dialog" class="cite-dialog" aria-labelledby="cite-title" aria-describedby="cite-intro">
+    <div class="cite-head">
+      <div>
+        <h2 id="cite-title">Cite REMEMBER</h2>
+        <p id="cite-intro">If REMEMBER helps your work, please cite the paper that introduced the method.</p>
+      </div>
+      <button type="button" class="cite-close" data-cite-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+    <figure class="cite-ref">
+      <blockquote id="cite-text">Incerto, E., Vandin, A., &amp; Sarv Ahrabi, S. (2025). Stochastic conformance checking based on variable-length Markov chains. <i>Information Systems</i>, 133, 102561. https://doi.org/10.1016/j.is.2025.102561</blockquote>
+      <figcaption class="cite-ref-actions">
+        <a href="https://doi.org/10.1016/j.is.2025.102561" target="_blank" rel="noopener">Open the paper (DOI) ↗</a>
+        <button type="button" class="btn btn-secondary cite-copy" data-copy="cite-text">Copy citation</button>
+      </figcaption>
+    </figure>
+    <div class="cite-bib-head">
+      <span>BibTeX</span>
+      <button type="button" class="btn btn-secondary cite-copy" data-copy="cite-bibtex">Copy BibTeX</button>
+    </div>
+<pre class="cite-bib" tabindex="0"><code id="cite-bibtex">@article{DBLP:journals/is/IncertoVA25,
+  author       = {Emilio Incerto and
+                  Andrea Vandin and
+                  Sima Sarv Ahrabi},
+  title        = {Stochastic conformance checking based on variable-length Markov chains},
+  journal      = {Inf. Syst.},
+  volume       = {133},
+  pages        = {102561},
+  year         = {2025},
+  url          = {https://doi.org/10.1016/j.is.2025.102561},
+  doi          = {10.1016/J.IS.2025.102561},
+  timestamp    = {Tue, 24 Mar 2026 08:46:40 +0100},
+  biburl       = {https://dblp.org/rec/journals/is/IncertoVA25.bib},
+  bibsource    = {dblp computer science bibliography, https://dblp.org}
+}</code></pre>
+    <p class="cite-foot">{% if preprint_url %}The tool itself is described in the <a href="{{ preprint_url }}" target="_blank" rel="noopener">REMEMBER tool preprint ↗</a>.{% else %}The preprint of the REMEMBER tool paper will be linked here when it is online.{% endif %} BibTeX source: <a href="https://dblp.org/rec/journals/is/IncertoVA25.bib" target="_blank" rel="noopener">dblp</a>.</p>
+    <span id="cite-status" class="visually-hidden" aria-live="polite"></span>
+  </dialog>
+
+  <div id="term-pop" class="term-pop" role="tooltip" hidden></div>
+
+  <script>
+    const root = document.documentElement;
+    const lightThemeButton = document.getElementById('theme-light');
+    const darkThemeButton = document.getElementById('theme-dark');
+
+    function setTheme(theme, persist=true) {
+      const value = theme === 'dark' ? 'dark' : 'light';
+      root.dataset.theme = value;
+      lightThemeButton.classList.toggle('active', value === 'light');
+      darkThemeButton.classList.toggle('active', value === 'dark');
+      lightThemeButton.setAttribute('aria-pressed', value === 'light' ? 'true' : 'false');
+      darkThemeButton.setAttribute('aria-pressed', value === 'dark' ? 'true' : 'false');
+      if (persist) {
+        try { localStorage.setItem('remember-theme', value); } catch (_) {}
+      }
+    }
+
+    setTheme(root.dataset.theme || 'light', false);
+    lightThemeButton.addEventListener('click', () => setTheme('light'));
+    darkThemeButton.addEventListener('click', () => setTheme('dark'));
+
+    const form = document.getElementById('run-form');
+    const trainInput = document.getElementById('train-input');
+    const testsInput = document.getElementById('tests-input');
+    const trainName = document.getElementById('train-name');
+    const testsName = document.getElementById('tests-name');
+    const trainFeedback = document.getElementById('train-feedback');
+    const testsFeedback = document.getElementById('tests-feedback');
+    const trainZone = document.querySelector('.drop-zone[data-input="train-input"]');
+    const testsZone = document.querySelector('.drop-zone[data-input="tests-input"]');
+    const statusBox = document.getElementById('status');
+    const runButton = document.getElementById('run-button');
+    const sampleButton = document.getElementById('sample-button');
+    const benchmarkButton = document.getElementById('benchmark-button');
+    const benchmarkDataset = document.getElementById('benchmark-dataset');
+    const datasetProfile = document.getElementById('dataset-profile');
+    const datasetChips = Array.from(document.querySelectorAll('.dataset-chip[data-dataset-id]'));
+    const downloadButton = document.getElementById('download-button');
+    const resultsPanel = document.getElementById('results-panel');
+    const sampleChecks = {{ sample_checks | tojson }};
+    const benchmarkManifest = {{ benchmark_manifest | tojson }};
+    let lastRows = [];
+    let lastMode = 'upload';
+    let lastBenchmarkName = '';
+
+    // -----------------------------------------------------------------------
+    // Comparison with the published results (paper, Figs. 4–5)
+    // -----------------------------------------------------------------------
+    const paperReference = {{ (paper_reference or {}) | tojson }} || {};
+    const paperDatasets = paperReference.datasets || {};
+    const liveRuns = {};   // dataset id -> summary of the live run(s) in this session
+    const cmpState = { dataset: null, view: 'detail', scale: 'fit' };
+    const cmpSection = document.getElementById('paper-comparison');
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const SHORT_NAMES = {
+      'bpic13-open-problems': 'BPIC13 Open Problems',
+      'bpic13-closed-problems': 'BPIC13 Closed Problems',
+      'bpic20-domestic': 'BPIC20 Domestic',
+      'bpic20-international': 'BPIC20 International',
+      'bpic20-prepaid': 'BPIC20 Prepaid Travel',
+      'bpic20-payment': 'BPIC20 Request for Payment',
+    };
+
+    function datasetName(id) {
+      const item = benchmarkManifest.find(d => d.id === id);
+      return item ? item.name : id;
+    }
+    function signed(value, digits=3) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return '—';
+      return `${n < 0 ? '−' : '+'}${Math.abs(n).toFixed(digits)}`;
+    }
+    function ordinal(n) {
+      const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+    function svgEl(tag, attrs, parent) {
+      const node = document.createElementNS(SVG_NS, tag);
+      Object.entries(attrs || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) node.setAttribute(key, value);
+      });
+      if (parent) parent.appendChild(node);
+      return node;
+    }
+    function svgText(parent, x, y, text, cls, anchor='start') {
+      const node = svgEl('text', {x, y, class: cls, 'text-anchor': anchor}, parent);
+      node.textContent = text;
+      return node;
+    }
+
+    // Box-plot statistics with the same conventions as the paper's figures
+    // (linear-interpolated quartiles, 1.5 × IQR whiskers).
+    function quantile(sorted, p) {
+      const pos = (sorted.length - 1) * p, lo = Math.floor(pos), hi = Math.ceil(pos);
+      return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+    }
+    function boxStats(values) {
+      const v = values.filter(Number.isFinite).sort((a, b) => a - b);
+      const mean = v.reduce((sum, x) => sum + x, 0) / v.length;
+      const q1 = quantile(v, .25), q3 = quantile(v, .75), iqr = q3 - q1;
+      const isOutlier = x => x < q1 - 1.5 * iqr || x > q3 + 1.5 * iqr;
+      const inside = v.filter(x => !isOutlier(x));
+      return {
+        mean, q1, q3, n: v.length, min: v[0], max: v[v.length - 1],
+        whisker_lo: Math.min(...inside), whisker_hi: Math.max(...inside),
+        outliers: v.filter(isOutlier),
+      };
+    }
+
+    function recordLiveRun(data) {
+      const values = (data.rows || []).map(row => Number(row.uemsc)).filter(Number.isFinite);
+      if (!data.benchmark_id || !values.length) return;
+      liveRuns[data.benchmark_id] = { ...boxStats(values), std: Number(data.std) };
+    }
+
+    function methodInfo(c) {
+      const qualitative = (paperReference.qualitative || {})[c.qualitative] || c.qualitative;
+      const stochastic = (paperReference.stochastic || {})[c.stochastic] || {};
+      return { full: `${qualitative} + ${stochastic.name || c.stochastic}`, ref: stochastic.ref || '' };
+    }
+    function bestCompetitor(ref) {
+      return ref.competitors.reduce((best, c) => (c.mean > best.mean ? c : best));
+    }
+
+    function detailRows(id, narrow) {
+      const ref = paperDatasets[id], live = liveRuns[id];
+      const rows = ref.competitors.map((c, index) => {
+        const info = methodInfo(c);
+        const author = info.ref.replace(/\s*\[\d+\]\s*$/, '');
+        return {
+          kind: 'other', order: 2 + index, label: c.id, stats: c, meanOnly: !!c.mean_only,
+          sub: narrow ? author.replace(' et al.', '') : author, full: info.full, ref: info.ref,
+        };
+      });
+      rows.push({
+        kind: 'paper', order: 1, label: 'VLMC · paper', stats: ref.vlmc,
+        sub: `Paper · ${ref.figure}`, full: 'VLMC, as published in the paper', ref: 'Incerto et al. 2025',
+      });
+      if (live) {
+        rows.push({
+          kind: 'live', order: 0, label: 'VLMC · your run', stats: live,
+          sub: 'REMEMBER · now', full: 'VLMC, computed now with the pipeline of the paper', ref: `${live.n} splits`,
+        });
+      }
+      return rows.sort((a, b) => (b.stats.mean - a.stats.mean) || (a.order - b.order));
+    }
+
+    function niceStep(range, target=5) {
+      const raw = range / target, mag = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mag;
+      return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mag;
+    }
+    function scaleDomain(rows, scale, target=5) {
+      if (scale === 'full') return { lo: 0, hi: 1, step: target >= 5 ? 0.2 : 0.25 };
+      let lo = Infinity, hi = -Infinity;
+      rows.forEach(row => {
+        const s = row.stats;
+        [s.mean, s.whisker_lo, s.whisker_hi, ...(s.outliers || [])].forEach(v => {
+          if (Number.isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+        });
+      });
+      const pad = Math.max((hi - lo) * 0.06, 0.005);
+      lo = Math.max(0, lo - pad); hi = Math.min(1, hi + pad);
+      const step = niceStep(hi - lo, target);
+      lo = Math.max(0, Math.floor(lo / step + 1e-9) * step);
+      hi = Math.min(1, Math.ceil(hi / step - 1e-9) * step);
+      if (hi <= lo) hi = Math.min(1, lo + step);
+      return { lo, hi, step };
+    }
+    function ticksFor(dom) {
+      const out = [];
+      for (let v = dom.lo; v <= dom.hi + dom.step * 1e-6; v += dom.step) out.push(Math.round(v * 1e6) / 1e6);
+      return out;
+    }
+    function tickLabel(v, step) {
+      const whole = k => Math.abs(step * k - Math.round(step * k)) < 1e-9;
+      return v.toFixed(whole(10) ? 1 : whole(100) ? 2 : 3);
+    }
+
+    // ---------- tooltip ----------
+    function ensureTip(host) {
+      let tip = host.querySelector('.cmp-tip');
+      if (!tip) { tip = document.createElement('div'); tip.className = 'cmp-tip'; tip.setAttribute('aria-hidden', 'true'); host.appendChild(tip); }
+      return tip;
+    }
+    function showTip(host, html, x, y) {
+      const tip = ensureTip(host);
+      tip.innerHTML = html;
+      const width = tip.offsetWidth, height = tip.offsetHeight, hostWidth = host.clientWidth;
+      let left = x + 16;
+      if (left + width > hostWidth) left = Math.max(0, x - width - 16);
+      let top = y - height - 12;
+      if (top < 0) top = y + 18;
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+      tip.classList.add('show');
+    }
+    function hideTip(host) {
+      const tip = host.querySelector('.cmp-tip');
+      if (tip) tip.classList.remove('show');
+    }
+    function attachTip(group, host, html, x, y) {
+      group.addEventListener('pointerenter', () => showTip(host, html, x, y));
+      group.addEventListener('pointerleave', () => hideTip(host));
+      group.addEventListener('focus', () => showTip(host, html, x, y));
+      group.addEventListener('blur', () => hideTip(host));
+    }
+    function tipHtml(title, sub, pairs, note='') {
+      const list = pairs.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('');
+      return `<strong>${escapeHtml(title)}</strong><span class="tip-sub">${escapeHtml(sub)}</span><dl>${list}</dl>${note ? `<span class="tip-sub" style="margin:7px 0 0">${escapeHtml(note)}</span>` : ''}`;
+    }
+
+    // ---------- view 1: this dataset ----------
+    function renderDetail() {
+      const id = cmpState.dataset, ref = paperDatasets[id], live = liveRuns[id];
+      const host = document.getElementById('cmp-chart');
+      host.innerHTML = '';
+      if (!ref) return;
+      const name = datasetName(id);
+      const best = bestCompetitor(ref);
+      const bestInfo = methodInfo(best);
+
+      // Headline figures
+      const set = (key, value) => { document.getElementById(key).innerHTML = value; };
+      if (live) {
+        const rank = 1 + ref.competitors.filter(c => c.mean > live.mean).length;
+        const lead = live.mean - best.mean;
+        const ratio = best.mean >= 0.005 ? live.mean / best.mean : null;
+        set('cmp-rank', escapeHtml(ordinal(rank)));
+        set('cmp-rank-sub', `of ${ref.competitors.length + 1} methods on this dataset`);
+        set('cmp-lead', escapeHtml(signed(lead)));
+        set('cmp-lead-sub', lead >= 0
+          ? `<span class="cmp-flag ahead">▲ Ahead</span>${ratio && ratio >= 1.05 ? `<span>${ratio.toFixed(1)}× higher</span>` : ''}`
+          : `<span class="cmp-flag behind">▼ Behind</span>`);
+        set('cmp-paper-sub', `Your run: Δ ${escapeHtml(signed(live.mean - ref.vlmc.mean))}`);
+      } else {
+        ['cmp-rank', 'cmp-lead'].forEach(k => set(k, '—'));
+        set('cmp-rank-sub', 'Run this dataset to see your rank');
+        set('cmp-lead-sub', '—');
+        set('cmp-paper-sub', ref.figure);
+      }
+      set('cmp-best', escapeHtml(number(best.mean)));
+      set('cmp-best-sub', `${escapeHtml(best.id)}${best.mean_only ? ' · mean only' : ''}`);
+      set('cmp-paper', escapeHtml(number(ref.vlmc.mean)));
+
+      // Takeaway sentence (plain language)
+      const allMeans = [...ref.competitors.map(c => c.mean), ref.vlmc.mean, ...(live ? [live.mean] : [])];
+      let text = '';
+      if (live) {
+        const lead = live.mean - best.mean;
+        const ratio = best.mean >= 0.005 ? live.mean / best.mean : null;
+        if (lead >= 0) {
+          text = `On <b>${escapeHtml(name)}</b>, this run scores <b>${number(live.mean)}</b>. The best competitor in the paper (<b>${escapeHtml(best.id)}</b>) scores <b>${number(best.mean)}</b>, so VLMC is <b>${number(lead)}</b> higher${ratio && ratio >= 1.05 ? ` (<b>${ratio.toFixed(1)}×</b>)` : ''}.`;
+        } else {
+          text = `On <b>${escapeHtml(name)}</b>, the competitor <b>${escapeHtml(best.id)}</b> scores higher (<b>${number(best.mean)}</b> vs <b>${number(live.mean)}</b>).`;
+          if (!ref.vlmc_is_best) text += ' The paper reports the same: this is the only one of the 11 datasets where a competitor is ahead of VLMC.';
+        }
+        if (Math.max(...allMeans) < 0.35) {
+          text += ' All methods score low on this log, so compare them with each other, not with 1.0.';
+        }
+        const delta = live.mean - ref.vlmc.mean;
+        text += Math.abs(delta) < 0.0005
+          ? ` Your result equals the VLMC value in the paper (${number(ref.vlmc.mean)}).`
+          : ` The paper reports ${number(ref.vlmc.mean)} for VLMC (Δ ${signed(delta)}).`;
+      } else {
+        text = `Published results for <b>${escapeHtml(name)}</b>: VLMC <b>${number(ref.vlmc.mean)}</b>, best competitor <b>${escapeHtml(best.id)}</b> <b>${number(best.mean)}</b>.`;
+      }
+      document.getElementById('cmp-takeaway').innerHTML = text;
+
+      // Chart geometry. Wide screens: label | plot | value on one line.
+      // Narrow screens (stacked): label + value on one line, the plot across the full width below.
+      const width = Math.max(300, host.clientWidth);
+      const stacked = width < 620;
+      const rows = detailRows(id, stacked);
+      const top = stacked ? 22 : 30, axisH = 48, rowH = stacked ? 60 : 42;
+      const x0 = stacked ? 16 : 214, x1 = stacked ? width - 16 : width - 82;
+      const rowTop = i => top + i * rowH;
+      const markY = i => rowTop(i) + (stacked ? 41 : rowH / 2);
+      const textY = i => rowTop(i) + (stacked ? 19 : rowH / 2 - 2);
+      const plotBottom = top + rows.length * rowH;
+      const height = plotBottom + axisH;
+      const dom = scaleDomain(rows, cmpState.scale, Math.max(3, Math.min(6, Math.floor((x1 - x0) / 72))));
+      const ticks = ticksFor(dom);
+      const X = v => x0 + (Math.min(Math.max(v, dom.lo), dom.hi) - dom.lo) / (dom.hi - dom.lo) * (x1 - x0);
+
+      const svg = svgEl('svg', {
+        class: 'cmp-svg', width, height, viewBox: `0 0 ${width} ${height}`, role: 'list',
+        'aria-label': `uEMSC on ${name}: this run, the paper's VLMC result and ${ref.competitors.length} competitor techniques`,
+      }, host);
+
+      rows.forEach((row, i) => {
+        if (row.kind === 'other') return;
+        svgEl('rect', { x: 0, y: rowTop(i) + 2, width, height: rowH - 4, rx: 10, class: row.kind === 'live' ? 'band-live' : 'band-paper' }, svg);
+      });
+      rows.forEach((row, i) => {
+        if (i === 0 || row.kind !== 'other' || rows[i - 1].kind !== 'other') return;
+        svgEl('line', { x1: 10, x2: width - 10, y1: rowTop(i), y2: rowTop(i), class: 'row-sep' }, svg);
+      });
+      ticks.forEach(v => {
+        const x = X(v);
+        if (stacked) rows.forEach((_, i) => svgEl('line', { x1: x, x2: x, y1: markY(i) - 12, y2: markY(i) + 12, class: 'grid' }, svg));
+        else svgEl('line', { x1: x, x2: x, y1: top - 4, y2: plotBottom, class: 'grid' }, svg);
+        svgText(svg, x, plotBottom + 18, tickLabel(v, dom.step), 't-axis', 'middle');
+      });
+      svgEl('line', { x1: x0, x2: x1, y1: plotBottom, y2: plotBottom, class: 'axis' }, svg);
+      svgText(svg, (x0 + x1) / 2, height - 6, stacked ? 'uEMSC — higher is better →' : 'uEMSC (mean of 10 splits) — higher is better →', 't-sub', 'middle');
+      if (!stacked) {
+        svgText(svg, 12, top - 10, 'Method', 't-sub');
+        svgText(svg, width - 12, top - 10, 'Mean', 't-sub', 'end');
+      }
+
+      // Reference line at the best competitor
+      const refX = X(best.mean);
+      if (stacked) rows.forEach((_, i) => svgEl('line', { x1: refX, x2: refX, y1: markY(i) - 15, y2: markY(i) + 15, class: 'ref-line' }, svg));
+      else svgEl('line', { x1: refX, x2: refX, y1: top - 8, y2: plotBottom, class: 'ref-line' }, svg);
+      if (!stacked) {
+        const refAnchor = refX > x1 - 80 ? 'end' : refX < x0 + 80 ? 'start' : 'middle';
+        svgText(svg, refX + (refAnchor === 'start' ? -2 : refAnchor === 'end' ? 2 : 0), top - 12, `best competitor ${number(best.mean)}`, 't-ref', refAnchor);
+      }
+
+      // Lead band on the live row
+      const liveIndex = rows.findIndex(r => r.kind === 'live');
+      if (live && liveIndex >= 0) {
+        const cy = markY(liveIndex), a = refX, b = X(live.mean);
+        if (Math.abs(b - a) > 3) svgEl('rect', { x: Math.min(a, b), y: cy - 12, width: Math.abs(b - a), height: 24, rx: 5, class: 'lead-band' }, svg);
+        const freeFrom = b >= a ? a + 6 : X(live.whisker_hi) + 8;
+        const freeTo = b >= a ? X(Math.min(live.whisker_lo, ...(live.outliers || []))) - 8 : a - 6;
+        if (freeTo - freeFrom >= 56) svgText(svg, (freeFrom + freeTo) / 2, cy + 4.5, signed(live.mean - best.mean), 't-lead', 'middle');
+      }
+
+      // Rows: labels, box plots, values
+      rows.forEach((row, i) => {
+        const cy = markY(i), ty = textY(i), s = row.stats;
+        const pairs = [['Mean', number(s.mean)]];
+        if (row.kind === 'live') pairs.push(['Standard deviation', number(s.std)]);
+        if (!row.meanOnly) {
+          pairs.push(['Middle 50% (Q1–Q3)', `${number(s.q1)} – ${number(s.q3)}`]);
+          pairs.push(['Whiskers', `${number(s.whisker_lo)} – ${number(s.whisker_hi)}`]);
+          if ((s.outliers || []).length) pairs.push(['Outliers', s.outliers.map(v => number(v)).join(', ')]);
+        }
+        if (row.kind !== 'other' || row.label !== best.id) pairs.push(['vs best competitor', signed(s.mean - best.mean)]);
+        const group = svgEl('g', {
+          class: `row k-${row.kind}`, tabindex: 0, role: 'listitem',
+          'aria-label': `${row.label}: mean uEMSC ${number(s.mean)}${row.meanOnly ? ' (only the mean is published)' : `, middle 50% ${number(s.q1)} to ${number(s.q3)}`}`,
+        }, svg);
+        svgEl('rect', { x: 0, y: rowTop(i) + 2, width, height: rowH - 4, rx: 10, class: 'hit' }, group);
+        const label = svgText(group, stacked ? 14 : 12, ty, row.label, row.kind === 'other' ? 't-label' : 't-label t-strong');
+        if (stacked) {
+          const subX = 14 + label.getComputedTextLength() + 8;
+          const sub = svgText(group, subX, ty, row.sub, 't-sub');
+          if (subX + sub.getComputedTextLength() > width - 70) sub.remove();
+        } else {
+          svgText(group, 12, ty + 16, row.sub, 't-sub');
+        }
+
+        if (row.meanOnly) {
+          svgEl('circle', { cx: X(s.mean), cy, r: 5.5, class: 'mean-only' }, group);
+        } else {
+          const lo = X(s.whisker_lo), hi = X(s.whisker_hi), q1 = X(s.q1), q3 = X(s.q3);
+          if (hi - lo >= 1) svgEl('line', { x1: lo, x2: hi, y1: cy, y2: cy, class: 'whisker' }, group);
+          if (hi - lo >= 4) [lo, hi].forEach(x => svgEl('line', { x1: x, x2: x, y1: cy - 5, y2: cy + 5, class: 'whisker' }, group));
+          svgEl('rect', { x: Math.min(q1, q3) - (Math.abs(q3 - q1) < 3 ? 1.5 : 0), y: cy - 8, width: Math.max(3, Math.abs(q3 - q1)), height: 16, rx: 3, class: 'box' }, group);
+          (s.outliers || []).forEach(v => svgEl('circle', { cx: X(v), cy, r: 3, class: 'outlier' }, group));
+          svgEl('circle', { cx: X(s.mean), cy, r: row.kind === 'other' ? 5 : 6, class: 'mean' }, group);
+        }
+        svgText(group, width - (stacked ? 14 : 12), stacked ? ty : cy + 5, number(s.mean), row.kind === 'other' ? 't-value' : 't-value is-key', 'end');
+        attachTip(group, host, tipHtml(row.label, `${row.full}${row.ref ? ` · ${row.ref}` : ''}`, pairs,
+          row.meanOnly ? 'The paper reports only the mean for this technique.' : ''), X(s.mean), cy);
+      });
+    }
+
+    // ---------- view 2: all datasets ----------
+    function renderOverview() {
+      const host = document.getElementById('cmp-overview-chart');
+      host.innerHTML = '';
+      const ids = benchmarkManifest.map(d => d.id).filter(id => paperDatasets[id]);
+      if (!ids.length) return;
+      const wins = ids.filter(id => paperDatasets[id].vlmc_is_best).length;
+      const losses = ids.filter(id => !paperDatasets[id].vlmc_is_best);
+      const liveCount = ids.filter(id => liveRuns[id]).length;
+      let text = `In the paper, VLMC has the highest mean uEMSC on <b>${wins} of ${ids.length}</b> datasets.`;
+      if (losses.length) text += ` The exception is <b>${losses.map(id => escapeHtml(datasetName(id))).join(', ')}</b>.`;
+      text += liveCount
+        ? ` Teal rings show your ${liveCount === 1 ? 'run' : `${liveCount} runs`} in this session.`
+        : ' Run benchmarks to add your own results as teal rings.';
+      document.getElementById('cmp-overview-takeaway').innerHTML = text;
+
+      const width = Math.max(300, host.clientWidth);
+      const stacked = width < 620;
+      const top = stacked ? 22 : 26, axisH = 48, rowH = stacked ? 56 : 38;
+      const x0 = stacked ? 16 : 226, x1 = stacked ? width - 16 : width - 104;
+      const rowTop = i => top + i * rowH;
+      const markY = i => rowTop(i) + (stacked ? 39 : rowH / 2);
+      const textY = i => rowTop(i) + (stacked ? 19 : rowH / 2 + 4.5);
+      const plotBottom = top + ids.length * rowH, height = plotBottom + axisH;
+      const ticks = (x1 - x0) < 360 ? [0, .25, .5, .75, 1] : [0, .2, .4, .6, .8, 1];
+      const X = v => x0 + Math.min(Math.max(v, 0), 1) * (x1 - x0);
+      const svg = svgEl('svg', { class: 'cmp-svg', width, height, viewBox: `0 0 ${width} ${height}`, role: 'list',
+        'aria-label': 'VLMC compared with the best competitor on all benchmark datasets' }, host);
+
+      ids.forEach((id, i) => {
+        if (id === cmpState.dataset) svgEl('rect', { x: 0, y: rowTop(i) + 2, width, height: rowH - 4, rx: 10, class: 'band-focus' }, svg);
+      });
+      ticks.forEach(v => {
+        if (stacked) ids.forEach((_, i) => svgEl('line', { x1: X(v), x2: X(v), y1: markY(i) - 10, y2: markY(i) + 10, class: 'grid' }, svg));
+        else svgEl('line', { x1: X(v), x2: X(v), y1: top - 4, y2: plotBottom, class: 'grid' }, svg);
+        svgText(svg, X(v), plotBottom + 18, ticks.length === 5 ? String(v) : v.toFixed(1), 't-axis', 'middle');
+      });
+      svgEl('line', { x1: x0, x2: x1, y1: plotBottom, y2: plotBottom, class: 'axis' }, svg);
+      svgText(svg, (x0 + x1) / 2, height - 6, 'mean uEMSC — higher is better →', 't-sub', 'middle');
+      if (!stacked) {
+        svgText(svg, 12, top - 9, 'Dataset', 't-sub');
+        svgText(svg, width - 12, top - 9, 'VLMC lead', 't-sub', 'end');
+      }
+
+      ids.forEach((id, i) => {
+        const ref = paperDatasets[id], best = bestCompetitor(ref), live = liveRuns[id];
+        const cy = markY(i), ty = textY(i), lead = ref.vlmc.mean - best.mean;
+        const pairs = [['Best competitor', `${best.id} ${number(best.mean)}`], ['VLMC · paper', number(ref.vlmc.mean)]];
+        if (live) pairs.push(['VLMC · this session', number(live.mean)]);
+        pairs.push(['VLMC lead (paper)', signed(lead)]);
+        const group = svgEl('g', { class: 'row', tabindex: 0, role: 'listitem',
+          'aria-label': `${datasetName(id)}: VLMC ${number(ref.vlmc.mean)}, best competitor ${best.id} ${number(best.mean)}${live ? `, your run ${number(live.mean)}` : ''}` }, svg);
+        svgEl('rect', { x: 0, y: rowTop(i) + 2, width, height: rowH - 4, rx: 10, class: 'hit' }, group);
+        svgText(group, stacked ? 14 : 12, ty, SHORT_NAMES[id] || datasetName(id), id === cmpState.dataset ? 't-label t-strong' : 't-label');
+        const xb = X(best.mean), xv = X(ref.vlmc.mean);
+        svgEl('line', { x1: Math.min(xb, xv), x2: Math.max(xb, xv), y1: cy, y2: cy, class: 'link' }, group);
+        const dot = (x, kind, r) => svgEl('circle', { cx: x, cy, r, class: 'mean' }, svgEl('g', { class: `k-${kind}` }, group));
+        dot(xb, 'other', 5);
+        dot(xv, 'paper', 5.5);
+        if (live) svgEl('circle', { cx: X(live.mean), cy, r: 8.5, class: 'live-ring' }, group);
+        const value = svgEl('text', { x: width - (stacked ? 14 : 12), y: stacked ? ty : cy + 5, 'text-anchor': 'end', class: 't-value' }, group);
+        svgEl('tspan', { class: 't-glyph' }, value).textContent = `${lead >= 0 ? '▲' : '▼'} `;
+        svgEl('tspan', {}, value).textContent = signed(lead);
+        attachTip(group, host, tipHtml(datasetName(id), `${ref.figure} · VLMC lead = VLMC (paper) − best competitor`, pairs), Math.max(xb, xv), cy);
+      });
+    }
+
+    function renderComparison() {
+      if (cmpSection.hidden || !cmpState.dataset) return;
+      const detail = cmpState.view === 'detail';
+      document.getElementById('cmp-detail').hidden = !detail;
+      document.getElementById('cmp-overview').hidden = detail;
+      document.getElementById('cmp-scale-seg').hidden = !detail;
+      document.querySelectorAll('[data-cmp-view]').forEach(button => {
+        const active = button.dataset.cmpView === cmpState.view;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-cmp-scale]').forEach(button => {
+        const active = button.dataset.cmpScale === cmpState.scale;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      if (detail) renderDetail(); else renderOverview();
+    }
+
+    document.querySelectorAll('[data-cmp-view]').forEach(button => button.addEventListener('click', () => {
+      cmpState.view = button.dataset.cmpView; renderComparison();
+    }));
+    document.querySelectorAll('[data-cmp-scale]').forEach(button => button.addEventListener('click', () => {
+      cmpState.scale = button.dataset.cmpScale; renderComparison();
+    }));
+    let cmpLastWidth = 0, cmpFrame = 0;
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(entries => {
+        const w = Math.round(entries[0].contentRect.width);
+        if (w === cmpLastWidth) return;
+        cmpLastWidth = w;
+        cancelAnimationFrame(cmpFrame);
+        cmpFrame = requestAnimationFrame(renderComparison);
+      }).observe(cmpSection);
+    }
+
+    document.getElementById('cmp-download').addEventListener('click', () => {
+      const header = ['Dataset', 'Method', 'Source', 'Mean uEMSC', 'Q1', 'Q3', 'Whisker low', 'Whisker high', 'Outliers', 'Note'];
+      const lines = [];
+      const fmt = v => (Number.isFinite(Number(v)) ? Number(v).toFixed(4) : '');
+      benchmarkManifest.map(d => d.id).filter(id => paperDatasets[id]).forEach(id => {
+        const ref = paperDatasets[id], name = datasetName(id), live = liveRuns[id];
+        if (live) lines.push([name, 'VLMC (this run)', 'REMEMBER live run, paper pipeline', fmt(live.mean), fmt(live.q1), fmt(live.q3), fmt(live.whisker_lo), fmt(live.whisker_hi), live.outliers.map(fmt).join(' '), `${live.n} splits; SD = ${fmt(live.std)}`]);
+        const v = ref.vlmc;
+        lines.push([name, 'VLMC (paper)', `Incerto et al. 2025, ${ref.figure}`, fmt(v.mean), fmt(v.q1), fmt(v.q3), fmt(v.whisker_lo), fmt(v.whisker_hi), (v.outliers || []).map(fmt).join(' '), '']);
+        ref.competitors.forEach(c => {
+          const info = methodInfo(c);
+          lines.push([name, c.id, `${info.full}; ${info.ref}`, fmt(c.mean), fmt(c.q1), fmt(c.q3), fmt(c.whisker_lo), fmt(c.whisker_hi), (c.outliers || []).map(fmt).join(' '), c.mean_only ? 'only the mean is published' : (c.id === ref.best_competitor ? 'best competitor' : '')]);
+        });
+      });
+      const csv = '﻿' + [header, ...lines].map(row => row.map(csvCell).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'remember_paper_comparison.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    });
+
+    function activateMode(mode) {
+      document.querySelectorAll('.mode-button').forEach(button => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      document.querySelectorAll('[data-mode-panel]').forEach(panel => {
+        panel.hidden = panel.dataset.modePanel !== mode;
+      });
+      resultsPanel.hidden = false;
+      document.getElementById('results').hidden = true;
+      document.getElementById('empty-state').hidden = false;
+      document.getElementById('empty-state').textContent = mode === 'benchmarks'
+        ? 'Choose a dataset and run it.'
+        : mode === 'sample'
+          ? 'Run the example to see the results.'
+          : 'Results appear here after a run.';
+      statusBox.className = 'status';
+      statusBox.innerHTML = '';
+    }
+
+    document.querySelectorAll('.mode-button').forEach(button => {
+      button.addEventListener('click', () => activateMode(button.dataset.mode));
+    });
+
+    function selectedNames(files) {
+      const names = Array.from(files || []).map(file => file.name);
+      if (!names.length) return 'No files selected';
+      if (names.length <= 3) return names.join(', ');
+      return `${names.slice(0, 3).join(', ')} and ${names.length - 3} more`;
+    }
+
+    function isAllowedLogFile(name) {
+      const lower = String(name || '').toLowerCase();
+      return ['.xes', '.csv', '.txt', '.xes.gz', '.csv.gz', '.txt.gz'].some(ext => lower.endsWith(ext));
+    }
+
+    function setDropZoneState(zone, feedbackNode, state, message) {
+      zone.classList.remove('ready', 'error');
+      feedbackNode.className = 'upload-feedback';
+      feedbackNode.innerHTML = '';
+      if (!state) return;
+      zone.classList.add(state === 'success' ? 'ready' : 'error');
+      feedbackNode.classList.add('show', state === 'success' ? 'success' : 'error');
+      const icon = state === 'success' ? '✓' : '⚠';
+      feedbackNode.innerHTML = `<span class="icon" aria-hidden="true">${icon}</span><span>${escapeHtml(message)}</span>`;
+    }
+
+    function validateSelection(input, kind) {
+      const files = Array.from(input.files || []);
+      if (!files.length) return { state:null, message:'' };
+      const invalid = files.filter(file => !isAllowedLogFile(file.name));
+      if (invalid.length) return { state:'error', message:`Unsupported file: ${invalid[0].name}. Use XES, CSV or TXT (also .gz).` };
+      if (kind === 'train' && files.length !== 1) return { state:'error', message:'Choose one reference log.' };
+      if (kind === 'tests' && files.length < 1) return { state:'error', message:'Choose at least one log to check.' };
+      return {
+        state:'success',
+        message: kind === 'train' ? 'Reference log selected.' : `${files.length} log${files.length === 1 ? '' : 's'} selected.`
+      };
+    }
+
+    function refreshFileSelectionUI() {
+      trainName.textContent = selectedNames(trainInput.files);
+      testsName.textContent = selectedNames(testsInput.files);
+      const trainCheck = validateSelection(trainInput, 'train');
+      const testsCheck = validateSelection(testsInput, 'tests');
+      setDropZoneState(trainZone, trainFeedback, trainCheck.state, trainCheck.message);
+      setDropZoneState(testsZone, testsFeedback, testsCheck.state, testsCheck.message);
+    }
+
+    trainInput.addEventListener('change', refreshFileSelectionUI);
+    testsInput.addEventListener('change', refreshFileSelectionUI);
+
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+      const input = document.getElementById(zone.dataset.input);
+      zone.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); input.click(); } });
+      ['dragenter','dragover'].forEach(name => zone.addEventListener(name, event => { event.preventDefault(); zone.classList.add('dragging'); }));
+      ['dragleave','drop'].forEach(name => zone.addEventListener(name, event => { event.preventDefault(); zone.classList.remove('dragging'); }));
+      zone.addEventListener('drop', event => { input.files = event.dataTransfer.files; input.dispatchEvent(new Event('change')); });
+    });
+
+    function number(value, digits=3) { const n=Number(value); return Number.isFinite(n) ? n.toFixed(digits) : '—'; }
+    function percent(value) { const n=Number(value); return Number.isFinite(n) ? `${n.toFixed(2)}%` : '—'; }
+    function seconds(value) { const n=Number(value); return Number.isFinite(n) ? `${n.toFixed(3)} s` : '—'; }
+    function integer(value) { const n=Number(value); return Number.isFinite(n) ? Math.round(n).toLocaleString() : '—'; }
+    function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
+
+    function describeRun(reference, checks) {
+      const names = Array.from(checks || []).filter(Boolean);
+      const checkedLogs = names.length ? names.map(escapeHtml).join(', ') : 'none';
+      return `Reference log: <b>${escapeHtml(reference || 'not selected')}</b> · Logs to check: <b>${checkedLogs}</b>`;
+    }
+
+    function setStatus(title, kind='normal', busy=false, details='') {
+      const extra = kind === 'error' ? ' error' : kind === 'success' ? ' success' : '';
+      statusBox.className = `status show${extra}`;
+      const spinner = busy ? '<span class="spinner" aria-hidden="true"></span>' : '';
+      const detailLine = details ? `<span class="status-details">${details}</span>` : '';
+      statusBox.innerHTML = `${spinner}<span class="status-content"><span class="status-title">${escapeHtml(title)}</span>${detailLine}</span>`;
+      runButton.disabled = busy;
+      sampleButton.disabled = busy;
+      if (benchmarkButton) benchmarkButton.disabled = busy;
+    }
+
+    function scoreCell(value) {
+      const score = Number(value);
+      if (!Number.isFinite(score)) return '<span class="score-num">—</span>';
+      const width = Math.max(0, Math.min(100, score * 100)).toFixed(1);
+      return `<div class="score"><span class="score-num">${number(score)}</span><span class="bar-track"><span class="bar-fill" style="width:${width}%"></span></span></div>`;
+    }
+
+    function render(data) {
+      lastRows = data.rows || [];
+      lastMode = data.input_mode || 'upload';
+      lastBenchmarkName = data.benchmark_name || '';
+      document.getElementById('empty-state').hidden = true;
+      document.getElementById('results').hidden = false;
+      const count = lastRows.length;
+      const benchmarkRun = data.input_mode === 'benchmark';
+      const single = count === 1;
+      document.getElementById('mean-uemsc').textContent = benchmarkRun
+        ? `${number(data.mean)} ± ${number(data.std)}`
+        : number(data.mean);
+      document.getElementById('mean-er').textContent = number(data.mean_entropic_relevance_bits);
+      document.getElementById('mean-perplexity').textContent = number(data.mean_predictive_perplexity_supported);
+      document.getElementById('uemsc-kpi-hint').textContent = benchmarkRun
+        ? `Mean ± SD (n − 1) over ${count} splits.`
+        : '1 = the model gives each trace exactly its frequency in the log.';
+      document.getElementById('report-subtitle').textContent = benchmarkRun
+        ? 'Ten VLMCs, one per split, each learned from the reference half and tested on the other half.'
+        : 'Scores of the logs against the VLMC learned from the reference log.';
+      document.getElementById('per-log-block').hidden = false;
+      document.getElementById('per-log-title').textContent = benchmarkRun ? 'Per split' : 'Per log';
+      document.getElementById('result-name-heading').textContent = benchmarkRun ? 'Split' : 'Log';
+      document.getElementById('per-log-note').textContent = benchmarkRun
+        ? 'One row per split. Bar: uEMSC from 0 to 1.'
+        : 'Bar: uEMSC from 0 to 1.';
+      document.getElementById('reference-traces-label').textContent = benchmarkRun ? `Reference traces (sum over ${count} splits)` : 'Reference traces';
+      document.querySelectorAll('.kpi-value').forEach(node => node.title = single ? '' : `Unweighted mean over ${count} ${benchmarkRun ? 'splits' : 'logs'}`);
+
+      const scope = benchmarkRun
+        ? `<b>${escapeHtml(data.benchmark_name || 'Benchmark')}</b> · mean over <b>${count}</b> splits`
+        : single ? `Log: <b>${escapeHtml(lastRows[0].name)}</b>` : `Mean over <b>${count}</b> logs`;
+      const total = Number(data.aggregate_total), supported = Number(data.aggregate_supported);
+      const support = Number.isFinite(total) && Number.isFinite(supported)
+        ? `<b>${percent(data.aggregate_supported_percent)}</b> of traces supported (${integer(supported)} of ${integer(total)})`
+        : 'trace support not available';
+      document.getElementById('run-line').innerHTML = `${scope} · ${support} · paper pipeline, no pruning`;
+
+      const warningBox = document.getElementById('run-warning');
+      const countWarnings = Array.isArray(data.count_warnings) ? data.count_warnings : [];
+      const inputWarnings = Array.isArray(data.input_warnings) ? data.input_warnings : [];
+      const warningSections = [];
+      if (inputWarnings.length) {
+        warningSections.push(`<strong>Input notes</strong>${inputWarnings.map(escapeHtml).join('<br>')}`);
+      }
+      if (countWarnings.length) {
+        warningSections.push(`<strong>Trace counts</strong>${countWarnings.map(item => `${escapeHtml(item.name)}: ${escapeHtml(item.warning)}`).join('<br>')}`);
+      }
+      warningBox.hidden = warningSections.length === 0;
+      warningBox.innerHTML = warningSections.join('<br>');
+
+      document.getElementById('learning-time').textContent = seconds(data.learning_time_s);
+      document.getElementById('checking-time').textContent = seconds(data.total_scoring_time_s);
+      document.getElementById('total-time').textContent = seconds(data.total_time_s);
+      document.getElementById('reference-traces').textContent = integer(data.reference_traces);
+
+      document.getElementById('result-body').innerHTML = lastRows.map(row => {
+        const rowSupport = Number.isFinite(Number(row.supported_percent))
+          ? `${percent(row.supported_percent)} (${integer(row.nonzero)}/${integer(row.total)})`
+          : '—';
+        const label = data.input_mode === 'benchmark' && row.reference_name && row.check_name
+          ? `${escapeHtml(row.name)}<div class="file-name">${escapeHtml(row.reference_name)} → ${escapeHtml(row.check_name)}</div>`
+          : escapeHtml(row.name);
+        return `<tr><td class="filename">${label}</td><td class="col-score">${scoreCell(row.uemsc)}</td><td class="num">${number(row.entropic_relevance_bits)}</td><td class="num">${number(row.predictive_perplexity_supported)}</td><td class="num">${rowSupport}</td><td class="num">${seconds(row.scoring_time_s)}</td></tr>`;
+      }).join('');
+
+      if (benchmarkRun) {
+        recordLiveRun(data);
+        cmpState.dataset = data.benchmark_id;
+      }
+      cmpSection.hidden = !(benchmarkRun && paperDatasets[data.benchmark_id]);
+      renderComparison();
+
+      resultsPanel.scrollIntoView({behavior: 'smooth', block: 'start'});
+    }
+
+    async function postForm(url, body) {
+      let response;
+      try {
+        response = await fetch(url, {method:'POST', body});
+      } catch (_) {
+        throw new Error('REMEMBER does not answer. Is it still running?');
+      }
+      let data = null;
+      try { data = await response.json(); } catch (_) {}
+      if (!response.ok || !data) throw new Error((data && data.error) || `The request failed (HTTP ${response.status}).`);
+      return data;
+    }
+
+    // The column / attribute names typed in the upload form, as shown in the status line.
+    function describeKeys() {
+      const parts = [['case_key', 'case id'], ['activity_key', 'activity'], ['timestamp_key', 'timestamp']]
+        .map(([name, label]) => [label, form.elements[name].value.trim()])
+        .filter(([, value]) => value)
+        .map(([label, value]) => `${label} <b>${escapeHtml(value)}</b>`);
+      return parts.length ? ` · Names: ${parts.join(', ')}` : '';
+    }
+
+    async function runRequest(url, body, context) {
+      const details = describeRun(context.reference, context.checks) + (context.keys || '');
+      setStatus('Running', 'normal', true, `${details}. Large logs take longer.`);
+      try {
+        const data = await postForm(url, body);
+        render(data);
+        const count = data.n_tests ?? data.rows?.length ?? context.checks.length;
+        setStatus(`Done: ${count} log${count === 1 ? '' : 's'} checked.`, 'success', false, details);
+      } catch (error) {
+        setStatus(error.message || String(error), 'error', false, details);
+      } finally {
+        runButton.disabled = false;
+        sampleButton.disabled = false;
+        if (benchmarkButton) benchmarkButton.disabled = false;
+      }
+    }
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!trainInput.files.length || !testsInput.files.length) {
+        setStatus('Choose one reference log and at least one log to check.', 'error');
+        return;
+      }
+      runRequest('/api/run', new FormData(form), {
+        reference: trainInput.files[0].name,
+        checks: Array.from(testsInput.files).map(file => file.name),
+        keys: describeKeys(),
+      });
+    });
+
+    sampleButton.addEventListener('click', () => {
+      if (!sampleChecks.length) {
+        setStatus('The example files are missing from data/samples.', 'error');
+        return;
+      }
+      const data = new FormData();
+      runRequest('/api/sample', data, {
+        reference: 'reference.xes',
+        checks: sampleChecks,
+      });
+    });
+
+    const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></svg>';
+    const WARN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4.5M12 17.5v.01"/></svg>';
+
+    function renderDatasetProfile(item) {
+      if (!datasetProfile) return;
+      if (!item) { datasetProfile.innerHTML = ''; return; }
+      const stats = item.stats || {};
+      const ref = paperDatasets[item.id];
+      const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString('en-US') : '—';
+      const cells = [['traces', stats.traces], ['events', stats.events], ['activities', stats.activities], ['variants', stats.variants]]
+        .map(([label, value]) => `<div class="dp-stat"><strong>${fmt(value)}</strong><span>${label}</span></div>`).join('');
+      let note = '';
+      if (stats.traces && stats.variants && stats.variants / stats.traces >= 0.5) {
+        note = `<p class="dp-note">Most traces are unique (<b>${fmt(stats.variants)}</b> variants in <b>${fmt(stats.traces)}</b> traces). No model predicts a one-off trace well, so all methods score low here; compare them with each other.</p>`;
+      }
+      let paperLine = '';
+      if (ref) {
+        const best = bestCompetitor(ref);
+        paperLine = `<div class="dp-paper"><span>VLMC in the paper: <b>${number(ref.vlmc.mean)}</b></span><span>Best competitor: <b>${number(best.mean)}</b> (${escapeHtml(best.id)})</span></div>`;
+      }
+      let status;
+      if (!item.installed) {
+        status = `<div class="dp-repl is-warn">${WARN_SVG}<span>The files of this dataset are not installed.</span></div>`;
+      } else if (item.paper_order) {
+        status = `<div class="dp-repl">${CHECK_SVG}<span><b>Replicable:</b> the ${item.splits || 10} splits of the paper, with its event order. A run gives the values${ref ? ` of ${escapeHtml(ref.figure)}` : ''}.</span></div>`;
+      } else {
+        status = `<div class="dp-repl is-warn">${WARN_SVG}<span>The paper-order files are missing, so the XES splits are used; values can differ slightly from the paper.</span></div>`;
+      }
+      datasetProfile.innerHTML = `
+        <div class="dp-head">
+          <div><h4 class="dp-name">${escapeHtml(item.name)}</h4><span class="dp-source">${escapeHtml(item.source_log || '')} log</span></div>
+          ${ref ? `<span class="dp-figure">Paper ${escapeHtml(ref.figure)}</span>` : ''}
+        </div>
+        ${item.description ? `<p class="dp-desc">${escapeHtml(item.description)}</p>` : ''}
+        <div class="dp-stats" aria-label="Size of the full log">${cells}</div>
+        ${note}
+        ${paperLine}
+        ${status}
+        <div class="dp-foot">Full log (both halves of a split). Splits from <a href="https://doi.org/10.5281/zenodo.7578655" target="_blank" rel="noopener">Mannhardt et al., Zenodo ↗</a></div>`;
+    }
+
+    function updateBenchmarkSelection() {
+      const selected = benchmarkManifest.find(item => item.id === benchmarkDataset.value);
+      datasetChips.forEach(chip => chip.classList.toggle('active', chip.dataset.datasetId === benchmarkDataset.value));
+      renderDatasetProfile(selected);
+    }
+
+    datasetChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.disabled) return;
+        benchmarkDataset.value = chip.dataset.datasetId;
+        updateBenchmarkSelection();
+      });
+    });
+    benchmarkDataset.addEventListener('change', updateBenchmarkSelection);
+    updateBenchmarkSelection();
+
+    benchmarkButton.addEventListener('click', async () => {
+      const selected = benchmarkManifest.find(item => item.id === benchmarkDataset.value);
+      if (!selected) { setStatus('Choose a dataset.', 'error'); return; }
+      if (!selected.installed) { setStatus('The files of this dataset are not installed.', 'error'); return; }
+      const body = new FormData();
+      body.append('dataset', selected.id);
+      const details = `Dataset: <b>${escapeHtml(selected.name)}</b> · ${selected.splits} splits`;
+      setStatus('Running benchmark', 'normal', true, `${details}. One VLMC per split; large datasets take several minutes.`);
+      try {
+        const data = await postForm('/api/benchmark', body);
+        render(data);
+        setStatus(`Done: ${data.benchmark_name}.`, 'success', false, `${data.n_tests} splits`);
+      } catch (error) {
+        setStatus(error.message || String(error), 'error', false, details);
+      } finally {
+        runButton.disabled = false;
+        sampleButton.disabled = false;
+        benchmarkButton.disabled = false;
+      }
+    });
+
+    function csvCell(value) {
+      const text = value == null ? '' : String(value);
+      return `"${text.replaceAll('"','""')}"`;
+    }
+
+    // ---------- Cite us ----------
+    const citeDialog = document.getElementById('cite-dialog');
+    const citeOpen = document.getElementById('cite-open');
+    const citeStatus = document.getElementById('cite-status');
+    if (citeDialog && citeOpen) {
+      citeOpen.addEventListener('click', () => {
+        if (typeof citeDialog.showModal === 'function') citeDialog.showModal(); else citeDialog.setAttribute('open', '');
+      });
+      citeDialog.querySelectorAll('[data-cite-close]').forEach(button => button.addEventListener('click', () => citeDialog.close()));
+      citeDialog.addEventListener('click', event => { if (event.target === citeDialog) citeDialog.close(); });
+      citeDialog.addEventListener('close', () => citeOpen.focus());
+    }
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (_) {
+        const area = document.createElement('textarea');
+        area.value = text; area.setAttribute('readonly', ''); area.style.position = 'fixed'; area.style.opacity = '0';
+        (citeDialog || document.body).appendChild(area); area.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (_) {}
+        area.remove();
+        return ok;
+      }
+    }
+    document.querySelectorAll('.cite-copy').forEach(button => {
+      const label = button.textContent;
+      button.addEventListener('click', async () => {
+        const source = document.getElementById(button.dataset.copy);
+        const text = source ? source.textContent.replace(/\s+\n/g, '\n').trim() : '';
+        const ok = await copyText(text);
+        button.textContent = ok ? 'Copied' : 'Select and copy';
+        button.classList.toggle('is-done', ok);
+        if (citeStatus) citeStatus.textContent = ok ? `${label.replace('Copy ', '')} copied to the clipboard.` : 'Copy failed. Select the text and copy it.';
+        setTimeout(() => { button.textContent = label; button.classList.remove('is-done'); }, 1800);
+      });
+    });
+
+    // ---------- Term explanations ----------
+    const TERMS = {
+      uemsc: {
+        title: 'uEMSC', sub: 'unit Earth Movers’ Stochastic Conformance',
+        body: 'Compares how often each trace occurs in the log, L(t), with the probability the VLMC gives it, M(t). 1 means the model gives every trace exactly its observed frequency.',
+        formula: 'uEMSC = 1 − Σ max(L(t) − M(t), 0)', dir: 'Higher is better',
+      },
+      eru: {
+        title: 'ER-U', sub: 'Entropic Relevance, uniform background (Alkhammash et al., 2022)',
+        body: 'Average bits needed to describe one trace of the log with the model. Traces the model cannot produce are coded uniformly, which costs more bits.',
+        dir: 'Lower is better',
+      },
+      perplexity: {
+        title: 'Predictive perplexity', sub: 'next-activity diagnostic',
+        body: 'How unsure the model is, on average, about the next activity. 1 means every next activity is certain. Only traces the model can produce count. A diagnostic, not a conformance score.',
+        dir: 'Lower is better',
+      },
+      support: {
+        title: 'Trace support', sub: 'share of supported traces',
+        body: 'Share of traces the model can produce (likelihood above zero). A trace with an activity or a step never seen in the reference log has likelihood zero.',
+        dir: 'Higher is better',
+      },
+    };
+    const termPop = document.getElementById('term-pop');
+    let termButton = null;
+    let termPinned = false;
+
+    function placeTermPop(button) {
+      const r = button.getBoundingClientRect();
+      const w = termPop.offsetWidth, h = termPop.offsetHeight, vw = window.innerWidth, vh = window.innerHeight;
+      let left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), vw - w - 12);
+      let top = r.bottom + 8;
+      if (top + h > vh - 12 && r.top - h - 8 > 12) top = r.top - h - 8;
+      termPop.style.left = `${left}px`;
+      termPop.style.top = `${top}px`;
+    }
+    function showTerm(button, pinned=false) {
+      const term = TERMS[button.dataset.term];
+      if (!term || !termPop) return;
+      if (termButton && termButton !== button) termButton.setAttribute('aria-expanded', 'false');
+      termButton = button;
+      termPinned = pinned;
+      termPop.innerHTML = `<strong>${escapeHtml(term.title)}</strong><span class="tp-sub">${escapeHtml(term.sub)}</span>${escapeHtml(term.body)}`
+        + (term.formula ? `<span class="tp-formula">${escapeHtml(term.formula)}</span>` : '')
+        + `<span class="tp-dir">${escapeHtml(term.dir)}</span>`;
+      termPop.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      button.setAttribute('aria-describedby', 'term-pop');
+      placeTermPop(button);
+    }
+    function hideTerm() {
+      if (!termPop || termPop.hidden) return;
+      termPop.hidden = true;
+      if (termButton) { termButton.setAttribute('aria-expanded', 'false'); termButton.removeAttribute('aria-describedby'); }
+      termButton = null;
+      termPinned = false;
+    }
+    document.querySelectorAll('.term-info').forEach(button => {
+      button.addEventListener('click', event => {
+        event.stopPropagation();
+        if (termButton === button && termPinned) hideTerm(); else showTerm(button, true);
+      });
+      button.addEventListener('pointerenter', event => {
+        if (event.pointerType === 'mouse' && (termButton !== button || !termPinned)) showTerm(button);
+      });
+      button.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse' && !termPinned) hideTerm(); });
+      button.addEventListener('focus', () => { if (!termPinned) showTerm(button); });
+      button.addEventListener('blur', () => { if (!termPinned) hideTerm(); });
+    });
+    document.addEventListener('click', event => { if (termPop && !termPop.contains(event.target)) hideTerm(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') hideTerm(); });
+    window.addEventListener('scroll', () => { if (termButton && !termPop.hidden) placeTermPop(termButton); }, { passive: true });
+    window.addEventListener('resize', hideTerm);
+
+    refreshFileSelectionUI();
+    activateMode('upload');
+
+    downloadButton.addEventListener('click', () => {
+      const benchmark = lastMode === 'benchmark';
+      const header = [...(benchmark ? ['Split'] : []),'Reference log','Check log','uEMSC','ER-U (bits/trace)','Predictive perplexity','Supported traces','Total traces','Trace support (%)','Check time (s)'];
+      const rows = lastRows.map(row => [...(benchmark ? [row.name] : []),row.reference_name,row.check_name,row.uemsc,row.entropic_relevance_bits,row.predictive_perplexity_supported,row.nonzero,row.total,row.supported_percent,row.scoring_time_s]);
+      const csv = '\ufeff' + [header, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8'}));
+      const link = document.createElement('a');
+      link.href = url;
+      const safeName = lastBenchmarkName ? lastBenchmarkName.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'') : 'conformance';
+      link.download = benchmark ? `remember_${safeName}_benchmark.csv` : 'remember_conformance_report.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);  // Safari needs the URL a little longer
+    });
+  </script>
+</body>
+</html>

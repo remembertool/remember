@@ -1,0 +1,40 @@
+REMEMBER - stochastic conformance checking with Variable-Length Markov Chains
+
+Copyright (C) 2026 Emilio Incerto (1), Andrea Vandin (2, 3), Sima Sarv Ahrabi (2)
+(1) IMT Lucca, Italy
+(2) L'EMbeDS and Institute of Economics, Sant'Anna School for Advanced Studies, Pisa, Italy
+(3) DTU Technical University of Denmark, Kongens Lyngby, Denmark
+Contact: emilio.incerto@imtlucca.it
+
+REMEMBER is free software: you can redistribute it and/or modify it under the terms of
+the GNU General Public License as published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version, with the additional
+terms below.
+
+REMEMBER is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE. See the GNU General Public License for more details. You should have received
+a copy of the GNU General Public License along with REMEMBER (file LICENSE). If not,
+see <https://www.gnu.org/licenses/>.
+
+
+Additional terms under section 7 of the GNU General Public License, version 3
+------------------------------------------------------------------------------
+
+These terms apply to the files of REMEMBER whose header says
+"SPDX-License-Identifier: GPL-3.0-or-later".
+
+(c) A modified version of REMEMBER must be marked as different from the original:
+    it must not be distributed under the name "REMEMBER".
+
+(e) This licence grants no rights under trademark law for the name "REMEMBER" or for
+    the REMEMBER logo (static/logo-header.png, static/favicon.png). You may still
+    state, truthfully, that your work is based on REMEMBER.
+
+
+Parts with their own licences
+-----------------------------
+
+The Java engine (engine/) and the benchmark data (data/benchmarks/) are not covered by
+this notice. Their origin, licences and source code are described in
+THIRD_PARTY_NOTICES.md.

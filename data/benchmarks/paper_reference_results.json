@@ -1,0 +1,1111 @@
+{
+  "version": 1,
+  "description": "uEMSC results published in the paper, used to compare a live REMEMBER benchmark run with the 8 competitor techniques and with the VLMC result reported in the paper.",
+  "source": {
+    "citation": "E. Incerto, A. Vandin, S. Sarv Ahrabi. Stochastic conformance checking based on variable-length Markov chains. Information Systems 133 (2025) 102561.",
+    "doi": "10.1016/j.is.2025.102561",
+    "figures": "Figs. 4 and 5",
+    "extraction": "Values were read from the vector drawing data of Figs. 4 and 5 (box edges, whisker caps, outlier markers and the orange mean line), calibrated on the y-axis grid lines of each plot. Accuracy is about +/-0.001 uEMSC.",
+    "statistic": "In the paper the line inside each box is the mean of the 10 splits; the box spans the 25th to 75th percentile; whiskers and circles follow the usual box-plot convention. For the techniques from Leemans et al. 2024 [21] the paper reports only the mean value."
+  },
+  "qualitative": {
+    "DFM": "Directly Follows Model miner",
+    "IMf": "Inductive Miner infrequent",
+    "FM": "Flower model"
+  },
+  "stochastic": {
+    "ABE": {
+      "name": "Alignment-based estimator",
+      "ref": "Mannhardt et al. 2023 [20]"
+    },
+    "FBE": {
+      "name": "Frequency-based estimator",
+      "ref": "Mannhardt et al. 2023 [20]"
+    },
+    "BUC": {
+      "name": "Baseline uniform choices",
+      "ref": "Mannhardt et al. 2023 [20]"
+    },
+    "DSDwe": {
+      "name": "Data-based stochastic discovery without one-hot encoding",
+      "ref": "Mannhardt et al. 2023 [20]"
+    },
+    "DSD": {
+      "name": "Data-based stochastic discovery",
+      "ref": "Mannhardt et al. 2023 [20]"
+    },
+    "FBEes": {
+      "name": "Frequency-based estimator with enhanced likelihood estimation",
+      "ref": "Leemans et al. 2024 [21]"
+    },
+    "BCEes": {
+      "name": "Bill Clinton-based estimator with enhanced likelihood estimation",
+      "ref": "Leemans et al. 2024 [21]"
+    },
+    "ABEes": {
+      "name": "Alignment-based estimator with enhanced likelihood estimation",
+      "ref": "Leemans et al. 2024 [21]"
+    }
+  },
+  "datasets": {
+    "bpic12-a": {
+      "figure": "Fig. 4(a)",
+      "vlmc": {
+        "mean": 0.9776,
+        "q1": 0.973,
+        "q3": 0.9823,
+        "whisker_lo": 0.9697,
+        "whisker_hi": 0.984,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.8283,
+          "q1": 0.8258,
+          "q3": 0.832,
+          "whisker_lo": 0.8196,
+          "whisker_hi": 0.8331,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.7265,
+          "q1": 0.7235,
+          "q3": 0.7308,
+          "whisker_lo": 0.7191,
+          "whisker_hi": 0.7338,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.7579,
+          "q1": 0.7559,
+          "q3": 0.7609,
+          "whisker_lo": 0.7505,
+          "whisker_hi": 0.7631,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.8283,
+          "q1": 0.8259,
+          "q3": 0.832,
+          "whisker_lo": 0.8197,
+          "whisker_hi": 0.8327,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.8283,
+          "q1": 0.8259,
+          "q3": 0.832,
+          "whisker_lo": 0.8197,
+          "whisker_hi": 0.8327,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.7295,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.7295,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.8327,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": true
+    },
+    "bpic13-incidents": {
+      "figure": "Fig. 4(b)",
+      "vlmc": {
+        "mean": 0.6523,
+        "q1": 0.6496,
+        "q3": 0.6552,
+        "whisker_lo": 0.6428,
+        "whisker_hi": 0.6607,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.1436,
+          "q1": 0.1424,
+          "q3": 0.1449,
+          "whisker_lo": 0.1407,
+          "whisker_hi": 0.1468,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.0413,
+          "q1": 0.0404,
+          "q3": 0.0425,
+          "whisker_lo": 0.0385,
+          "whisker_hi": 0.0434,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.0699,
+          "q1": 0.0688,
+          "q3": 0.0708,
+          "whisker_lo": 0.0682,
+          "whisker_hi": 0.0719,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.1436,
+          "q1": 0.1423,
+          "q3": 0.1449,
+          "whisker_lo": 0.1407,
+          "whisker_hi": 0.1467,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.1603,
+          "q1": 0.1488,
+          "q3": 0.1697,
+          "whisker_lo": 0.1271,
+          "whisker_hi": 0.1885,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.0442,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.0442,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.15,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_DSD",
+      "vlmc_is_best": true
+    },
+    "bpic13-open-problems": {
+      "figure": "Fig. 4(c)",
+      "vlmc": {
+        "mean": 0.693,
+        "q1": 0.6897,
+        "q3": 0.7005,
+        "whisker_lo": 0.6823,
+        "whisker_hi": 0.704,
+        "outliers": [
+          0.6669
+        ]
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.7075,
+          "q1": 0.7036,
+          "q3": 0.7196,
+          "whisker_lo": 0.695,
+          "whisker_hi": 0.7289,
+          "outliers": [
+            0.662
+          ]
+        },
+        {
+          "id": "FM_FBE",
+          "qualitative": "FM",
+          "stochastic": "FBE",
+          "mean": 0.3326,
+          "q1": 0.3197,
+          "q3": 0.3398,
+          "whisker_lo": 0.3141,
+          "whisker_hi": 0.3581,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.4359,
+          "q1": 0.4328,
+          "q3": 0.4356,
+          "whisker_lo": 0.431,
+          "whisker_hi": 0.4357,
+          "outliers": [
+            0.4275,
+            0.445,
+            0.4489
+          ]
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.7076,
+          "q1": 0.7036,
+          "q3": 0.7196,
+          "whisker_lo": 0.695,
+          "whisker_hi": 0.7292,
+          "outliers": [
+            0.662
+          ]
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.5248,
+          "q1": 0.4008,
+          "q3": 0.7036,
+          "whisker_lo": 0.1777,
+          "whisker_hi": 0.7278,
+          "outliers": []
+        },
+        {
+          "id": "FM_FBEes",
+          "qualitative": "FM",
+          "stochastic": "FBEes",
+          "mean": 0.3383,
+          "mean_only": true
+        },
+        {
+          "id": "FM_BCEes",
+          "qualitative": "FM",
+          "stochastic": "BCEes",
+          "mean": 0.3383,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.7456,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": false
+    },
+    "bpic13-closed-problems": {
+      "figure": "Fig. 4(d)",
+      "vlmc": {
+        "mean": 0.7249,
+        "q1": 0.7174,
+        "q3": 0.7359,
+        "whisker_lo": 0.7077,
+        "whisker_hi": 0.7383,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.642,
+          "q1": 0.6343,
+          "q3": 0.651,
+          "whisker_lo": 0.6161,
+          "whisker_hi": 0.6674,
+          "outliers": []
+        },
+        {
+          "id": "FM_FBE",
+          "qualitative": "FM",
+          "stochastic": "FBE",
+          "mean": 0.0505,
+          "q1": 0.0497,
+          "q3": 0.0514,
+          "whisker_lo": 0.049,
+          "whisker_hi": 0.0527,
+          "outliers": []
+        },
+        {
+          "id": "IMf_BUC",
+          "qualitative": "IMf",
+          "stochastic": "BUC",
+          "mean": 0.2095,
+          "q1": 0.2079,
+          "q3": 0.2116,
+          "whisker_lo": 0.2069,
+          "whisker_hi": 0.214,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.642,
+          "q1": 0.6343,
+          "q3": 0.651,
+          "whisker_lo": 0.6161,
+          "whisker_hi": 0.6671,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.6433,
+          "q1": 0.6366,
+          "q3": 0.6519,
+          "whisker_lo": 0.618,
+          "whisker_hi": 0.6698,
+          "outliers": []
+        },
+        {
+          "id": "FM_FBEes",
+          "qualitative": "FM",
+          "stochastic": "FBEes",
+          "mean": 0.0517,
+          "mean_only": true
+        },
+        {
+          "id": "FM_BCEes",
+          "qualitative": "FM",
+          "stochastic": "BCEes",
+          "mean": 0.0517,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.6547,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": true
+    },
+    "bpic17-offer": {
+      "figure": "Fig. 4(e)",
+      "vlmc": {
+        "mean": 0.99,
+        "q1": 0.9888,
+        "q3": 0.9919,
+        "whisker_lo": 0.985,
+        "whisker_hi": 0.9945,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.8412,
+          "q1": 0.8402,
+          "q3": 0.8416,
+          "whisker_lo": 0.8385,
+          "whisker_hi": 0.8418,
+          "outliers": [
+            0.8444,
+            0.8457
+          ]
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.8412,
+          "q1": 0.8402,
+          "q3": 0.8416,
+          "whisker_lo": 0.8385,
+          "whisker_hi": 0.8418,
+          "outliers": [
+            0.8444,
+            0.8457
+          ]
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.7112,
+          "q1": 0.7106,
+          "q3": 0.7117,
+          "whisker_lo": 0.7106,
+          "whisker_hi": 0.7119,
+          "outliers": [
+            0.7075,
+            0.7082,
+            0.7141,
+            0.716
+          ]
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.8412,
+          "q1": 0.8402,
+          "q3": 0.8416,
+          "whisker_lo": 0.8385,
+          "whisker_hi": 0.8418,
+          "outliers": [
+            0.8444,
+            0.8457
+          ]
+        },
+        {
+          "id": "IMf_DSD",
+          "qualitative": "IMf",
+          "stochastic": "DSD",
+          "mean": 0.9589,
+          "q1": 0.9567,
+          "q3": 0.9601,
+          "whisker_lo": 0.956,
+          "whisker_hi": 0.9646,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.8419,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.8419,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.8419,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "IMf_DSD",
+      "vlmc_is_best": true
+    },
+    "bpic20-domestic": {
+      "figure": "Fig. 4(f)",
+      "vlmc": {
+        "mean": 0.9675,
+        "q1": 0.9623,
+        "q3": 0.9732,
+        "whisker_lo": 0.9533,
+        "whisker_hi": 0.9775,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.8086,
+          "q1": 0.8054,
+          "q3": 0.8121,
+          "whisker_lo": 0.7997,
+          "whisker_hi": 0.8164,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.5805,
+          "q1": 0.5784,
+          "q3": 0.5833,
+          "whisker_lo": 0.5739,
+          "whisker_hi": 0.5861,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.6184,
+          "q1": 0.6179,
+          "q3": 0.6211,
+          "whisker_lo": 0.6178,
+          "whisker_hi": 0.6252,
+          "outliers": [
+            0.6096,
+            0.6096
+          ]
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.8086,
+          "q1": 0.8054,
+          "q3": 0.8121,
+          "whisker_lo": 0.7997,
+          "whisker_hi": 0.8164,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.8086,
+          "q1": 0.8054,
+          "q3": 0.8121,
+          "whisker_lo": 0.7997,
+          "whisker_hi": 0.8164,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.5807,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.5807,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.8079,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABE",
+      "vlmc_is_best": true
+    },
+    "bpic20-international": {
+      "figure": "Fig. 4(g)",
+      "vlmc": {
+        "mean": 0.816,
+        "q1": 0.8151,
+        "q3": 0.8188,
+        "whisker_lo": 0.815,
+        "whisker_hi": 0.8209,
+        "outliers": [
+          0.8062,
+          0.8062,
+          0.827
+        ]
+      },
+      "competitors": [
+        {
+          "id": "IMf_ABE",
+          "qualitative": "IMf",
+          "stochastic": "ABE",
+          "mean": 0.2656,
+          "q1": 0.2646,
+          "q3": 0.267,
+          "whisker_lo": 0.2615,
+          "whisker_hi": 0.2675,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.0,
+          "q1": 0.0,
+          "q3": 0.0,
+          "whisker_lo": 0.0,
+          "whisker_hi": 0.0,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.0076,
+          "q1": 0.0074,
+          "q3": 0.0077,
+          "whisker_lo": 0.0071,
+          "whisker_hi": 0.008,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.1858,
+          "q1": 0.1837,
+          "q3": 0.1872,
+          "whisker_lo": 0.1803,
+          "whisker_hi": 0.1907,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.1876,
+          "q1": 0.1795,
+          "q3": 0.1875,
+          "whisker_lo": 0.1774,
+          "whisker_hi": 0.1885,
+          "outliers": [
+            0.2336
+          ]
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.0,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.0,
+          "mean_only": true
+        },
+        {
+          "id": "IMf_ABEes",
+          "qualitative": "IMf",
+          "stochastic": "ABEes",
+          "mean": 0.269,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "IMf_ABEes",
+      "vlmc_is_best": true
+    },
+    "bpic20-prepaid": {
+      "figure": "Fig. 4(h)",
+      "vlmc": {
+        "mean": 0.838,
+        "q1": 0.8313,
+        "q3": 0.8489,
+        "whisker_lo": 0.8155,
+        "whisker_hi": 0.8546,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.3879,
+          "q1": 0.3842,
+          "q3": 0.3907,
+          "whisker_lo": 0.3745,
+          "whisker_hi": 0.3923,
+          "outliers": [
+            0.4008
+          ]
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.1551,
+          "q1": 0.1517,
+          "q3": 0.1589,
+          "whisker_lo": 0.1455,
+          "whisker_hi": 0.16,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.171,
+          "q1": 0.1711,
+          "q3": 0.173,
+          "whisker_lo": 0.169,
+          "whisker_hi": 0.1739,
+          "outliers": [
+            0.1612
+          ]
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.3922,
+          "q1": 0.3873,
+          "q3": 0.3949,
+          "whisker_lo": 0.3797,
+          "whisker_hi": 0.3996,
+          "outliers": [
+            0.4091
+          ]
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.2801,
+          "q1": 0.2788,
+          "q3": 0.2989,
+          "whisker_lo": 0.2745,
+          "whisker_hi": 0.313,
+          "outliers": [
+            0.2185,
+            0.2188
+          ]
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.1624,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.1624,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.391,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_DSDwe",
+      "vlmc_is_best": true
+    },
+    "bpic20-payment": {
+      "figure": "Fig. 5(i)",
+      "vlmc": {
+        "mean": 0.9598,
+        "q1": 0.9561,
+        "q3": 0.963,
+        "whisker_lo": 0.9483,
+        "whisker_hi": 0.9686,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.8086,
+          "q1": 0.805,
+          "q3": 0.8118,
+          "whisker_lo": 0.796,
+          "whisker_hi": 0.8209,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.5471,
+          "q1": 0.5421,
+          "q3": 0.5506,
+          "whisker_lo": 0.5412,
+          "whisker_hi": 0.5573,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.4694,
+          "q1": 0.4678,
+          "q3": 0.4702,
+          "whisker_lo": 0.4651,
+          "whisker_hi": 0.4724,
+          "outliers": [
+            0.4628,
+            0.478
+          ]
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.8088,
+          "q1": 0.8054,
+          "q3": 0.812,
+          "whisker_lo": 0.796,
+          "whisker_hi": 0.8211,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.8089,
+          "q1": 0.8058,
+          "q3": 0.8124,
+          "whisker_lo": 0.8,
+          "whisker_hi": 0.8216,
+          "outliers": [
+            0.7958
+          ]
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.5483,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.5483,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.8118,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": true
+    },
+    "sepsis": {
+      "figure": "Fig. 5(j)",
+      "vlmc": {
+        "mean": 0.1648,
+        "q1": 0.1578,
+        "q3": 0.1709,
+        "whisker_lo": 0.1502,
+        "whisker_hi": 0.1786,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.0391,
+          "q1": 0.0365,
+          "q3": 0.0414,
+          "whisker_lo": 0.0305,
+          "whisker_hi": 0.046,
+          "outliers": []
+        },
+        {
+          "id": "FM_FBE",
+          "qualitative": "FM",
+          "stochastic": "FBE",
+          "mean": 0.0,
+          "q1": 0.0,
+          "q3": 0.0,
+          "whisker_lo": 0.0,
+          "whisker_hi": 0.0001,
+          "outliers": [
+            0.0001
+          ]
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.0069,
+          "q1": 0.0066,
+          "q3": 0.0072,
+          "whisker_lo": 0.0063,
+          "whisker_hi": 0.0073,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.0337,
+          "q1": 0.0307,
+          "q3": 0.0372,
+          "whisker_lo": 0.028,
+          "whisker_hi": 0.041,
+          "outliers": [
+            0.0134,
+            0.05
+          ]
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.034,
+          "q1": 0.0332,
+          "q3": 0.0398,
+          "whisker_lo": 0.0323,
+          "whisker_hi": 0.0471,
+          "outliers": [
+            0.0102,
+            0.0217
+          ]
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.0,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.0,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.0451,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": true
+    },
+    "road-traffic-fines": {
+      "figure": "Fig. 5(k)",
+      "vlmc": {
+        "mean": 0.9901,
+        "q1": 0.9893,
+        "q3": 0.9917,
+        "whisker_lo": 0.9866,
+        "whisker_hi": 0.9928,
+        "outliers": []
+      },
+      "competitors": [
+        {
+          "id": "DFM_ABE",
+          "qualitative": "DFM",
+          "stochastic": "ABE",
+          "mean": 0.8193,
+          "q1": 0.8186,
+          "q3": 0.8199,
+          "whisker_lo": 0.8176,
+          "whisker_hi": 0.8213,
+          "outliers": []
+        },
+        {
+          "id": "DFM_FBE",
+          "qualitative": "DFM",
+          "stochastic": "FBE",
+          "mean": 0.6839,
+          "q1": 0.683,
+          "q3": 0.6849,
+          "whisker_lo": 0.6815,
+          "whisker_hi": 0.6855,
+          "outliers": []
+        },
+        {
+          "id": "DFM_BUC",
+          "qualitative": "DFM",
+          "stochastic": "BUC",
+          "mean": 0.6934,
+          "q1": 0.6928,
+          "q3": 0.6945,
+          "whisker_lo": 0.6915,
+          "whisker_hi": 0.6949,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSDwe",
+          "qualitative": "DFM",
+          "stochastic": "DSDwe",
+          "mean": 0.769,
+          "q1": 0.767,
+          "q3": 0.7707,
+          "whisker_lo": 0.7669,
+          "whisker_hi": 0.7721,
+          "outliers": []
+        },
+        {
+          "id": "DFM_DSD",
+          "qualitative": "DFM",
+          "stochastic": "DSD",
+          "mean": 0.775,
+          "q1": 0.7771,
+          "q3": 0.7814,
+          "whisker_lo": 0.777,
+          "whisker_hi": 0.783,
+          "outliers": [
+            0.7535,
+            0.7564
+          ]
+        },
+        {
+          "id": "DFM_FBEes",
+          "qualitative": "DFM",
+          "stochastic": "FBEes",
+          "mean": 0.684,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_BCEes",
+          "qualitative": "DFM",
+          "stochastic": "BCEes",
+          "mean": 0.684,
+          "mean_only": true
+        },
+        {
+          "id": "DFM_ABEes",
+          "qualitative": "DFM",
+          "stochastic": "ABEes",
+          "mean": 0.8196,
+          "mean_only": true
+        }
+      ],
+      "best_competitor": "DFM_ABEes",
+      "vlmc_is_best": true
+    }
+  }
+}
