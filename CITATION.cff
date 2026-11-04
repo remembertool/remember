@@ -3,6 +3,7 @@ message: "If you use REMEMBER or its results, please cite the paper below."
 title: "REMEMBER: stochastic conformance checking with Variable-Length Markov Chains"
 type: software
 version: "3.7"
+doi: "10.5281/zenodo.23952118"
 date-released: "2026-10-28"
 license: GPL-3.0-or-later
 repository-code: "https://github.com/remembertool/remember"

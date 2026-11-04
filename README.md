@@ -8,6 +8,7 @@
 <p align="center">
   <a href="https://hub.docker.com/r/remembericpm/remember"><img alt="Docker image remembericpm/remember:3.7" src="https://img.shields.io/badge/docker-remembericpm%2Fremember%3A3.7-0793a8?logo=docker&logoColor=white"></a>
   <a href="LICENSE"><img alt="Licence GPL-3.0-or-later" src="https://img.shields.io/badge/licence-GPL--3.0--or--later-0a2c43"></a>
+  <a href="https://doi.org/10.5281/zenodo.23952118"><img alt="Zenodo DOI 10.5281/zenodo.23952118" src="https://img.shields.io/badge/zenodo-10.5281%2Fzenodo.23952118-0793a8"></a>
   <a href="https://doi.org/10.1016/j.is.2025.102561"><img alt="Paper DOI 10.1016/j.is.2025.102561" src="https://img.shields.io/badge/paper-10.1016%2Fj.is.2025.102561-4fae2f"></a>
 </p>
 
@@ -41,7 +42,8 @@ For another port, change only the first number (`-p 127.0.0.1:8080:7860`, then o
 ### Without Docker
 
 Install Java 17 or newer (for example [Temurin](https://adoptium.net)) and Python 3.11 to 3.14,
-download this repository, and start the launcher for your system.
+download this repository or the archived package on
+[Zenodo](https://doi.org/10.5281/zenodo.23952118), and start the launcher for your system.
 
 | System | Launcher |
 |---|---|
@@ -236,7 +238,8 @@ connections only from your own computer (`127.0.0.1`, also in the Docker command
 ## Citing REMEMBER
 
 If you use REMEMBER or its results, please cite the paper. The **Cite us** button on the page
-gives the reference and the BibTeX entry, and `CITATION.cff` holds the same metadata.
+gives the reference and the BibTeX entry, and `CITATION.cff` holds the same metadata. To cite
+this version of the software, use its Zenodo DOI [10.5281/zenodo.23952118](https://doi.org/10.5281/zenodo.23952118).
 
 ```bibtex
 @article{DBLP:journals/is/IncertoVA25,
