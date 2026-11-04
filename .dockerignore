@@ -1,0 +1,19 @@
+# Only what the web app needs at run time goes into the image.
+.git/
+.gitignore
+.remember/
+.venv/
+**/__pycache__/
+**/*.pyc
+**/.DS_Store
+Dockerfile
+.dockerignore
+docker_image.sh
+docker_smoke_test.py
+run_mac.command
+run_unix.sh
+run_windows.bat
+
+# The benchmarks run from data/benchmarks/<dataset>/paper/*.txt.gz. The XES splits
+# (about 143 MB) are only a fallback; they are on Zenodo (doi:10.5281/zenodo.7578655).
+data/benchmarks/**/*.xes.gz

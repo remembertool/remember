@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+
+# Local tools and editors
+.remember/
+.playwright-mcp/
+.DS_Store
