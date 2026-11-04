@@ -5,6 +5,7 @@ type: software
 version: "3.7"
 date-released: "2026-10-28"
 license: GPL-3.0-or-later
+repository-code: "https://github.com/remembertool/remember"
 repository-artifact: "https://hub.docker.com/r/remembericpm/remember"
 keywords:
   - process mining

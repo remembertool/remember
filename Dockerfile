@@ -22,6 +22,7 @@ FROM python:3.13-slim-bookworm@sha256:281d39ff02e3b389401586134ff9e6572954687822
 LABEL org.opencontainers.image.title="REMEMBER" \
       org.opencontainers.image.description="Stochastic conformance checking with Variable-Length Markov Chains: web tool, engine, example and paper benchmarks" \
       org.opencontainers.image.authors="Emilio Incerto, Andrea Vandin, Sima Sarv Ahrabi" \
+      org.opencontainers.image.source="https://github.com/remembertool/remember" \
       org.opencontainers.image.licenses="GPL-3.0-or-later"
 
 ENV JAVA_HOME=/opt/java/openjdk \
