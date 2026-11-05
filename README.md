@@ -10,6 +10,7 @@
   <a href="LICENSE"><img alt="Licence GPL-3.0-or-later" src="https://img.shields.io/badge/licence-GPL--3.0--or--later-0a2c43"></a>
   <a href="https://doi.org/10.5281/zenodo.23952118"><img alt="Zenodo DOI 10.5281/zenodo.23952118" src="https://img.shields.io/badge/zenodo-10.5281%2Fzenodo.23952118-0793a8"></a>
   <a href="https://doi.org/10.1016/j.is.2025.102561"><img alt="Paper DOI 10.1016/j.is.2025.102561" src="https://img.shields.io/badge/paper-10.1016%2Fj.is.2025.102561-4fae2f"></a>
+  <a href="https://youtu.be/8kGus_JzCN4"><img alt="Video demo on YouTube" src="https://img.shields.io/badge/video-demo%20(4%20min)-0a2c43?logo=youtube&logoColor=white"></a>
 </p>
 
 REMEMBER is a tool for stochastic conformance checking. It learns a Variable-Length Markov
@@ -19,7 +20,8 @@ method of Incerto, Vandin and Sarv Ahrabi (*Information Systems* 133, 2025) and 
 published results on the 11 benchmark logs of that paper.
 
 REMEMBER runs on your computer and is used from the browser. You write no code and tune no
-parameter: the VLMC is always learned with the setting of the paper's experiments.
+parameter: the VLMC is always learned with the setting of the paper's experiments. A
+[four-minute video](https://youtu.be/8kGus_JzCN4) shows the tool in use.
 
 <p align="center">
   <img src="docs/screenshot-comparison.png" alt="REMEMBER after a re-run of the Sepsis benchmark" width="680">
