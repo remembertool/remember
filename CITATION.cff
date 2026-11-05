@@ -16,7 +16,7 @@ keywords:
 authors:
   - given-names: Emilio
     family-names: Incerto
-    affiliation: "IMT Lucca"
+    affiliation: "IMT School for Advanced Studies Lucca"
     email: emilio.incerto@imtlucca.it
   - given-names: Andrea
     family-names: Vandin
@@ -30,7 +30,7 @@ preferred-citation:
   authors:
     - given-names: Emilio
       family-names: Incerto
-      affiliation: "IMT Lucca"
+      affiliation: "IMT School for Advanced Studies Lucca"
     - given-names: Andrea
       family-names: Vandin
       affiliation: "Sant'Anna School for Advanced Studies, Pisa; DTU Technical University of Denmark"

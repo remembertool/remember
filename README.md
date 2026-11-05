@@ -265,7 +265,7 @@ this version of the software, use its Zenodo DOI [10.5281/zenodo.23952118](https
 
 REMEMBER — Copyright © 2026 Emilio Incerto¹, Andrea Vandin²˒³, Sima Sarv Ahrabi²
 
-<sub>¹ IMT Lucca, Italy · ² L'EMbeDS and Institute of Economics, Sant'Anna School for Advanced
+<sub>¹ IMT School for Advanced Studies Lucca, Italy · ² L'EMbeDS and Institute of Economics, Sant'Anna School for Advanced
 Studies, Pisa, Italy · ³ DTU Technical University of Denmark, Kongens Lyngby, Denmark</sub>
 
 REMEMBER is free software: you can redistribute it and/or modify it under the terms of the GNU
